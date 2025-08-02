@@ -19,10 +19,10 @@ protocol TodoCoreDataServiceProtocol {
 class TodoCoreDataService: TodoCoreDataServiceProtocol {
     private let container: NSPersistentContainer
     private let userDefaults = UserDefaults.standard
-    private let firstLaunchKey = "isFirstlaunch"
+    private let firstLaunchKey = "isFirstLaunch"
     
     init() {
-        container = NSPersistentContainer(name: "TZEffective2025_08_01")
+        container = NSPersistentContainer(name: "TodoDataModel")
         container.loadPersistentStores { _, error in
             if let error = error {
                 print("Core Data failed to load: \(error.localizedDescription)")

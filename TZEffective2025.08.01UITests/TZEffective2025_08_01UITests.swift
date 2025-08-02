@@ -1,5 +1,5 @@
 //
-//  TZEffective2025_08_01UITests.swift
+//  TodoDataModelUITests.swift
 //  TZEffective2025.08.01UITests
 //
 //  Created by Валентин on 02.08.2025.
@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class TZEffective2025_08_01UITests: XCTestCase {
+final class TodoDataModelUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

@@ -1,5 +1,5 @@
 //
-//  TZEffective2025_08_01UITestsLaunchTests.swift
+//  TodoDataModelUITestsLaunchTests.swift
 //  TZEffective2025.08.01UITests
 //
 //  Created by Валентин on 02.08.2025.
@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class TZEffective2025_08_01UITestsLaunchTests: XCTestCase {
+final class TodoDataModelUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

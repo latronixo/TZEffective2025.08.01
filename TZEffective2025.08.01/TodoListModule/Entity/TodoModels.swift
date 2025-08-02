@@ -35,7 +35,7 @@ struct TodoItemViewModel: Identifiable {
     init(from apiItem: TodoItemAPI) {
         self.id = apiItem.id
         self.title = apiItem.todo
-        self.describe = ""
+        self.describe = apiItem.todo
         self.isCompleted = apiItem.completed
         self.createdAt = Date()
         self.userId = apiItem.userId
