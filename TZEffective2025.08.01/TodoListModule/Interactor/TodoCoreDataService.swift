@@ -14,6 +14,7 @@ protocol TodoCoreDataServiceProtocol {
     func deleteAllTodos()
     func isFirstLaunch() -> Bool
     func markAsFirstLaunch()
+    func updateTodoCompletion(id: Int, isCompleted: Bool)
 }
 
 class TodoCoreDataService: TodoCoreDataServiceProtocol {
@@ -81,5 +82,21 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
     
     func markAsFirstLaunch() {
         userDefaults.set(true, forKey: firstLaunchKey)
+    }
+    
+    func updateTodoCompletion(id: Int, isCompleted: Bool) {
+        let context = container.viewContext
+        let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+        request.predicate = NSPredicate(format: "id == %d", id)
+        
+        do {
+            let results = try context.fetch(request)
+            if let todoItem = results.first {
+                todoItem.setValue(isCompleted, forKey: "completed")
+                try context.save()
+            }
+        } catch {
+            print("Error updating todo completion: \(error)")
+        }
     }
 }

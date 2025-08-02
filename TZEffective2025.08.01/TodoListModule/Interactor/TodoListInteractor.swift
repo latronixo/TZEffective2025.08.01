@@ -79,14 +79,19 @@ final class TodoListInteractor: TodoListInteractorInput {
     
     func toggleTodoCompletion(id: Int) {
         if let index = allTodos.firstIndex(where: { $0.id == id }) {
+            let newCompletedState = !allTodos[index].isCompleted
+                    
             allTodos[index] = TodoItemViewModel(
                 id: allTodos[index].id,
                 title: allTodos[index].title,
                 describe: allTodos[index].describe,
-                isCompleted: !allTodos[index].isCompleted,
+                isCompleted: newCompletedState,
                 createdAt: allTodos[index].createdAt,
                 userId: allTodos[index].userId
             )
+                    
+            coreDataService.updateTodoCompletion(id: id, isCompleted: newCompletedState)
+                    
             output?.didUpdateTodos(allTodos)
         }
     }
