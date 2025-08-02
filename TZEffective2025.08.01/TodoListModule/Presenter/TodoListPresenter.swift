@@ -1,8 +1,8 @@
 //
 //  TodoListPresenter.swift
-//  ViperExample
+//  TZEffective2025.08.01
 //
-//  Created by Валентин on 31.07.2025.
+//  Created by Валентин on 02.08.2025.
 //
 
 import Foundation
@@ -33,11 +33,9 @@ final class TodoListPresenter {
         self.router = router
         self.view = view
     }
-    
 }
 
 extension TodoListPresenter: TodoListViewOutput {
-    
     func viewDidLoad() {
         output?.showLoading()
         interactor.loadTodos()
@@ -53,7 +51,6 @@ extension TodoListPresenter: TodoListViewOutput {
 }
 
 extension TodoListPresenter: TodoListInteractorOutput {
-    
     func didLoadTodos(_ todos: [TodoItemViewModel]) {
         output?.hideLoading()
         output?.displayTodos(todos)

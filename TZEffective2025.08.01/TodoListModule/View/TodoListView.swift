@@ -1,8 +1,8 @@
 //
 //  TodoListView.swift
-//  ViperExample
+//  TZEffective2025.08.01
 //
-//  Created by Валентин on 31.07.2025.
+//  Created by Валентин on 02.08.2025.
 //
 
 import UIKit
@@ -19,21 +19,10 @@ protocol TodoListViewOutput: AnyObject {
 
 final class TodoListView: UIViewController, TodoListViewInput {
     var output: TodoListViewOutput?
-    private lazy var searchBar: UISearchBar = {
-        let element = UISearchBar()
-        
-        return element
-    }()
-    private lazy var tableView: UITableView = {
-        let element = UITableView()
-        
-        return element
-    }()
-    private lazy var loadingIndicator: UIActivityIndicatorView = {
-        let element = UIActivityIndicatorView()
-        element.style = .large
-        return element
-    }()
+    
+    private let searchBar = UISearchBar()
+    private let tableView = UITableView()
+    private let loadingIndicator = UIActivityIndicatorView(style: .large)
     
     private var todos: [TodoItemViewModel] = []
     
@@ -58,12 +47,12 @@ final class TodoListView: UIViewController, TodoListViewInput {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        
     }
     
     private func setupViews() {
         view.backgroundColor = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
         
+        // Search Bar
         searchBar.placeholder = "Search"
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
@@ -71,44 +60,47 @@ final class TodoListView: UIViewController, TodoListViewInput {
         searchBar.backgroundColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1.0)
         searchBar.tintColor = .white
         
+        // TableView
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.register(TodoTableViewCell.self, forCellReuseIdentifier: "TodoCell")
         
+        // Loading Indicator
         loadingIndicator.color = .white
         loadingIndicator.hidesWhenStopped = true
         
+        // Add to view hierarchy
         view.addSubview(searchBar)
         view.addSubview(tableView)
         view.addSubview(loadingIndicator)
         
+        // Constraints
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
             tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
            
-            loadingIndicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
-}
-
-extension TodoListView: UITableViewDataSource, UITableViewDelegate, TodoTableViewCellDelegate {
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
     }
-    
+}
+
+extension TodoListView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todos.count
     }
@@ -124,17 +116,19 @@ extension TodoListView: UITableViewDataSource, UITableViewDelegate, TodoTableVie
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
-    
-    func todoCellDidToggle(_ cell: TodoTableViewCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else { return }
-        let todo = todos[indexPath.row]
-        output?.todoToggled(id: todo.id)
-    }
 }
 
 extension TodoListView: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         output?.searchTextChanged(searchText)
+    }
+}
+
+extension TodoListView: TodoTableViewCellDelegate {
+    func todoCellDidToggle(_ cell: TodoTableViewCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let todo = todos[indexPath.row]
+        output?.todoToggled(id: todo.id)
     }
 }
 

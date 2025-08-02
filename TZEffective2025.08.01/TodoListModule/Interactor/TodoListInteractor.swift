@@ -1,8 +1,8 @@
 //
 //  TodoListInteractor.swift
-//  ViperExample
+//  TZEffective2025.08.01
 //
-//  Created by Валентин on 31.07.2025.
+//  Created by Валентин on 02.08.2025.
 //
 
 import Foundation
@@ -44,17 +44,15 @@ final class TodoListInteractor: TodoListInteractorInput {
     private func loadTodosFromAPI() {
         networkService.fetchTodos { [weak self] result in
             DispatchQueue.main.async {
-                guard let self = self else { return }
-                
                 switch result {
                 case .success(let response):
                     let todoViewModels = response.todos.map { TodoItemViewModel(from: $0) }
-                    self.allTodos = todoViewModels
-                    self.coreDataService.saveTodos(response.todos)
-                    self.coreDataService.markAsFirstLaunch()
-                    self.output?.didLoadTodos(todoViewModels)
+                    self?.allTodos = todoViewModels
+                    self?.coreDataService.saveTodos(response.todos)
+                    self?.coreDataService.markAsFirstLaunch()
+                    self?.output?.didLoadTodos(todoViewModels)
                 case .failure(let error):
-                    self.output?.didReceiveError(error.localizedDescription)
+                    self?.output?.didReceiveError(error.localizedDescription)
                 }
             }
         }
@@ -72,11 +70,13 @@ final class TodoListInteractor: TodoListInteractorInput {
             output?.didUpdateTodos(allTodos)
         } else {
             let filteredTodos = allTodos.filter { todo in
-                todo.title.localizedCaseInsensitiveContains(query) || todo.describe.localizedCaseInsensitiveContains(query)
+                todo.title.localizedCaseInsensitiveContains(query) || 
+                todo.describe.localizedCaseInsensitiveContains(query)
             }
             output?.didUpdateTodos(filteredTodos)
         }
     }
+    
     func toggleTodoCompletion(id: Int) {
         if let index = allTodos.firstIndex(where: { $0.id == id }) {
             allTodos[index] = TodoItemViewModel(
@@ -85,8 +85,8 @@ final class TodoListInteractor: TodoListInteractorInput {
                 describe: allTodos[index].describe,
                 isCompleted: !allTodos[index].isCompleted,
                 createdAt: allTodos[index].createdAt,
-                userId: allTodos[index].userId,
-        )
+                userId: allTodos[index].userId
+            )
             output?.didUpdateTodos(allTodos)
         }
     }
