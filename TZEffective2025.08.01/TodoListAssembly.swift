@@ -1,8 +1,8 @@
 //
 //  TodoListAssembly.swift
-//  ViperExample
+//  TZEffective2025.08.01
 //
-//  Created by Валентин on 01.08.2025.
+//  Created by Валентин on 02.08.2025.
 //
 
 import UIKit
@@ -16,13 +16,13 @@ class TodoListAssembly {
         let router = TodoListRouter()
         
         let presenter = TodoListPresenter(interactor: interactor,
-                                       router: router,
-                                       view: view)
+                                        router: router,
+                                        view: view)
         
         interactor.output = presenter
         view.output = presenter
         router.rootViewController = view
-
+        
         let navigationController = UINavigationController(rootViewController: view)
         return navigationController
     }
