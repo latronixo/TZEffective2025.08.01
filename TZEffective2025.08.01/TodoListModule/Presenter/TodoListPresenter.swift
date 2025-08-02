@@ -9,10 +9,16 @@ import Foundation
 
 protocol TodoListPresenterInput {
     var output: TodoListPresenterOutput? { get set }
+    func viewDidLoad()
+    func searchTextChanged(_ text: String)
+    func todoToggled(id: Int)
 }
 
 protocol TodoListPresenterOutput: AnyObject {
-    
+    func displayTodos(_ todos: [TodoItemViewModel])
+    func displayError(_ message: String)
+    func showLoading()
+    func hideLoading()
 }
 
 final class TodoListPresenter {
@@ -31,17 +37,34 @@ final class TodoListPresenter {
 }
 
 extension TodoListPresenter: TodoListViewOutput {
-    func userSelectCreateTodo(withLogin login: String, password: String) {
-        interactor.createTodo(withLogin: login, password: password)
+    
+    func viewDidLoad() {
+        output?.showLoading()
+        interactor.loadTodos()
+    }
+    
+    func searchTextChanged(_ text: String) {
+        interactor.searchTodos(with: text)
+    }
+    
+    func todoToggled(id: Int) {
+        interactor.toggleTodoCompletion(id: id)
     }
 }
 
 extension TodoListPresenter: TodoListInteractorOutput {
-    func didReceive(error: String) {
-        
+    
+    func didLoadTodos(_ todos: [TodoItemViewModel]) {
+        output?.hideLoading()
+        output?.displayTodos(todos)
     }
     
-    func didCreateTodo(withLogin login: String) {
-        router.openAddScreen(withLogin: login)
+    func didReceiveError(_ error: String) {
+        output?.hideLoading()
+        output?.displayError(error)
+    }
+    
+    func didUpdateTodos(_ todos: [TodoItemViewModel]) {
+        output?.displayTodos(todos)
     }
 }

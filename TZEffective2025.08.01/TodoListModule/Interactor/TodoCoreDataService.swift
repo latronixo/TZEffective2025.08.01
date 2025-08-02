@@ -19,14 +19,34 @@ protocol TodoCoreDataServiceProtocol {
 class TodoCoreDataService: TodoCoreDataServiceProtocol {
     private let container: NSPersistentContainer
     private let userDefaults = UserDefaults.standard
-    private let firstLaunchKey = "isFirstlaunc"
+    private let firstLaunchKey = "isFirstlaunch"
     
     init() {
         container = NSPersistentContainer(name: "TZEffective2025_08_01")
         container.loadPersistentStores { _, error in
             if let error = error {
-                fatalError("Core Data failed to load: \(error.localizedDescription)")
+                print("Core Data failed to load: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    func saveTodos(_ todos: [TodoItemAPI]) {
+        let context = container.viewContext
+        
+        for todo in todos {
+            let todoItem = NSEntityDescription.insertNewObject(forEntityName: "TodoItem", into: context)
+            todoItem.setValue(todo.id, forKey: "id")
+            todoItem.setValue(todo.todo, forKey: "title")
+            todoItem.setValue(todo.todo, forKey: "describe")
+            todoItem.setValue(todo.completed, forKey: "completed")
+            todoItem.setValue(todo.userId, forKey: "userId")
+            todoItem.setValue(Date(), forKey: "createdAt")
+        }
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error saving todos: \(error)")
         }
     }
     

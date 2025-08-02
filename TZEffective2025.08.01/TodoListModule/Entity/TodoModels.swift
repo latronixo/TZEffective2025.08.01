@@ -49,4 +49,13 @@ struct TodoItemViewModel: Identifiable {
         self.createdAt = coreDataItem.value(forKey: "createdAt") as? Date ?? Date ()
         self.userId = coreDataItem.value(forKey: "userId") as? Int ?? 0
     }
+    
+    init(id: Int, title: String, describe: String, isCompleted: Bool, createdAt: Date, userId: Int) {
+        self.id = id
+        self.title = title
+        self.describe = describe
+        self.isCompleted = isCompleted
+        self.createdAt = createdAt
+        self.userId = userId
+    }
 }
