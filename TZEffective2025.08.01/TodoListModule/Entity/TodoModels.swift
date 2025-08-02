@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 // MARK: - API Models
 struct TodoResponse: Codable {
@@ -40,12 +41,12 @@ struct TodoItemViewModel: Identifiable {
         self.userId = apiItem.userId
     }
     
-    init(from coreDataItem: TodoItem) {
-        self.id = Int(coreDataItem.id)
-        self.title = coreDataItem.title ?? ""
-        self.describe = ""
-        self.isCompleted = coreDataItem.completed
-        self.createdAt = coreDataItem.createdAt
-        self.userId = Int(coreDataItem.userId)
+    init(from coreDataItem: NSManagedObject) {
+        self.id = coreDataItem.value(forKey: "id") as? Int ?? 0
+        self.title = coreDataItem.value(forKey: "title") as? String ?? ""
+        self.describe = coreDataItem.value(forKey: "describe") as? String ?? ""
+        self.isCompleted = coreDataItem.value(forKey: "completed") as? Bool ?? false
+        self.createdAt = coreDataItem.value(forKey: "createdAt") as? Date ?? Date ()
+        self.userId = coreDataItem.value(forKey: "userId") as? Int ?? 0
     }
 }
