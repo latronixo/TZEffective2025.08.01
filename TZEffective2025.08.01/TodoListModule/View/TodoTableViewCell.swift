@@ -122,18 +122,48 @@ class TodoTableViewCell: UITableViewCell {
     private func updateCheckmarkState() {
         guard let todo = todo else { return }
         
+        titleLabel.attributedText = nil
+        titleLabel.text = todo.title
+        
         if todo.isCompleted {
             checkmarkButton.backgroundColor = .yellow
             checkmarkButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
             checkmarkButton.tintColor = .black
             titleLabel.alpha = 0.6
             descriptionLabel.alpha = 0.6
+            
+            let attributedString = NSAttributedString(
+                string: todo.title,
+                attributes: [
+                    .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+                    .strikethroughColor: UIColor.white
+                ]
+            )
+            titleLabel.attributedText = attributedString
         } else {
             checkmarkButton.backgroundColor = .clear
             checkmarkButton.setImage(nil, for: .normal)
             titleLabel.alpha = 1.0
             descriptionLabel.alpha = 1.0
+            
+            let attributedString = NSMutableAttributedString(string: todo.title)
+            attributedString.removeAttribute(.strikethroughStyle, range: NSRange(location: 0, length: attributedString.length))
+            titleLabel.text = todo.title
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        // Сбрасываем все состояния ячейки
+        todo = nil
+        titleLabel.attributedText = nil
+        titleLabel.text = nil
+        titleLabel.alpha = 1.0
+        descriptionLabel.alpha = 1.0
+        checkmarkButton.backgroundColor = .clear
+        checkmarkButton.setImage(nil, for: .normal)
+        delegate = nil
     }
     
     @objc private func checkmarkTapped() {
