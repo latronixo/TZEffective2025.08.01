@@ -24,8 +24,6 @@ final class DetailTodoView: UIViewController, DetailTodoViewInput {
     private let dateLabel = UILabel()
     private let descriptionTextView = UITextView()
     
-    private var todo: TodoItemViewModel
-    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
@@ -77,7 +75,7 @@ final class DetailTodoView: UIViewController, DetailTodoViewInput {
         descriptionTextView.layer.cornerRadius = 8
         
         view.addSubview(titleTextField)
-        view.addSubview(descriptionTextView)
+        view.addSubview(dateLabel)
         view.addSubview(descriptionTextView)
         
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -106,7 +104,7 @@ final class DetailTodoView: UIViewController, DetailTodoViewInput {
     func configure(with todo: TodoItemViewModel) {
         titleTextField.text = todo.title
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd/mm/yyyy"
+        formatter.dateFormat = "dd/MM/yyyy"
         
         dateLabel.text = formatter.string(from: todo.createdAt)
         descriptionTextView.text = todo.describe
@@ -134,5 +132,9 @@ extension DetailTodoView: DetailTodoPresenterOutput {
         let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+    
+    func closeView() {
+        dismiss(animated: true)
     }
 }
