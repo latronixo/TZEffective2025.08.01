@@ -9,6 +9,7 @@ import UIKit
 
 protocol TodoTableViewCellDelegate: AnyObject {
     func todoCellDidToggle(_ cell: TodoTableViewCell)
+    func todoCellDidLongPress(_ cell: TodoTableViewCell)
 }
 
 class TodoTableViewCell: UITableViewCell {
@@ -105,6 +106,8 @@ class TodoTableViewCell: UITableViewCell {
             dateLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12),
             
         ])
+        
+        setupLongPressGesture()
     }
     
     func configure(with todo: TodoItemViewModel) {
@@ -164,6 +167,15 @@ class TodoTableViewCell: UITableViewCell {
         checkmarkButton.backgroundColor = .clear
         checkmarkButton.setImage(nil, for: .normal)
         delegate = nil
+    }
+    
+    private func setupLongPressGesture() {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        addGestureRecognizer(longPressGesture)
+    }
+    
+    @objc private func handleLongPress () {
+        delegate?.todoCellDidLongPress(self)
     }
     
     @objc private func checkmarkTapped() {

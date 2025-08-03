@@ -125,11 +125,33 @@ extension TodoListView: UISearchBarDelegate {
 }
 
 extension TodoListView: TodoTableViewCellDelegate {
+    
     func todoCellDidToggle(_ cell: TodoTableViewCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let todo = todos[indexPath.row]
         output?.todoToggled(id: todo.id)
     }
+    
+    func todoCellDidLongPress(_ cell: TodoTableViewCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let todo = todos[indexPath.row]
+        showContextMenu(for: todo, at: indexPath)
+    }
+    
+    func showContextMenu(for todo: TodoItemViewModel, at indexPath: IndexPath) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Редактировать", style: .default) { _ in
+            self.output?.editTodo(todo)
+        })
+        alert.addAction(UIAlertAction(title: "Поделиться", style: .default) { _ in
+            self.output?.shareTodo(todo)
+        })
+        alert.addAction(UIAlertAction(title: "Удалить", style: .default) { _ in
+            self.output?.deleteTodo(todo)
+        })
+        present(alert, animated: true)
+    }
+
 }
 
 // MARK: TodoListPresenterOutput
