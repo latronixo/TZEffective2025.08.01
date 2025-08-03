@@ -15,6 +15,9 @@ protocol TodoListViewOutput: AnyObject {
     func viewDidLoad()
     func searchTextChanged(_ text: String)
     func todoToggled(id: Int)
+    func editTodo(_ todo: TodoItemViewModel)
+    func shareTodo(_ todo: TodoItemViewModel)
+    func deleteTodo(_ id: Int)
 }
 
 final class TodoListView: UIViewController, TodoListViewInput {
@@ -147,7 +150,7 @@ extension TodoListView: TodoTableViewCellDelegate {
             self.output?.shareTodo(todo)
         })
         alert.addAction(UIAlertAction(title: "Удалить", style: .default) { _ in
-            self.output?.deleteTodo(todo)
+            self.output?.deleteTodo(indexPath.row)
         })
         present(alert, animated: true)
     }

@@ -13,12 +13,14 @@ protocol TodoListInteractorInput {
     func loadTodos()
     func searchTodos(with query: String)
     func toggleTodoCompletion(id: Int)
+    func deleteTodo(_ id: Int)
 }
 
 protocol TodoListInteractorOutput: AnyObject {
     func didLoadTodos(_ todos: [TodoItemViewModel])
     func didReceiveError(_ error: String)
     func didUpdateTodos(_ todos: [TodoItemViewModel])
+    func didDeleteTodo(_ todos: [TodoItemViewModel])
 }
 
 final class TodoListInteractor: TodoListInteractorInput {
@@ -95,4 +97,13 @@ final class TodoListInteractor: TodoListInteractorInput {
             output?.didUpdateTodos(allTodos)
         }
     }
+    
+    func deleteTodo(_ id: Int) {
+        if let index = allTodos.firstIndex(where: { $0.id == id }) {
+            coreDataService.deleteTodo(id)
+            allTodos.remove(at: index)
+            output?.didDeleteTodo(allTodos)
+        }
+    }
+
 }

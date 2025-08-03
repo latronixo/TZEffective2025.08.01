@@ -48,6 +48,18 @@ extension TodoListPresenter: TodoListViewOutput {
     func todoToggled(id: Int) {
         interactor.toggleTodoCompletion(id: id)
     }
+    
+    func editTodo(_ todo: TodoItemViewModel) {
+        router.openDetailScreen(with: todo)
+    }
+    
+    func shareTodo(_ todo: TodoItemViewModel) {
+        router.shareTodo(with: todo)
+    }
+    
+    func deleteTodo(_ id: Int) {
+        interactor.deleteTodo(id)
+    }
 }
 
 extension TodoListPresenter: TodoListInteractorOutput {
@@ -62,6 +74,10 @@ extension TodoListPresenter: TodoListInteractorOutput {
     }
     
     func didUpdateTodos(_ todos: [TodoItemViewModel]) {
+        output?.displayTodos(todos)
+    }
+    
+    func didDeleteTodo(_ todos: [TodoItemViewModel]) {
         output?.displayTodos(todos)
     }
 }
