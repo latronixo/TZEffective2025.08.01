@@ -35,7 +35,7 @@ final class DetailTodoInteractor: DetailTodoInteractorInput {
     }
     
     func saveTodo(title: String, description: String) {
-        coreDataService.updateTodo(id: todo.id, title: todo.title, description: todo.describe)
+        coreDataService.updateTodo(id: todo.id, title: title, description: description)
         output?.didSaveTodo()
     }
 }

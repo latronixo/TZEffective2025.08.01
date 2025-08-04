@@ -145,7 +145,7 @@ extension TodoListView: TodoTableViewCellDelegate {
     func showContextMenu(for todo: TodoItemViewModel, at indexPath: IndexPath) {
         currentContextTodo = todo
         
-        let contextMenu = ContextMenuViewController()
+        let contextMenu = ContextMenu()
         contextMenu.delegate = self
         
         let cell = tableView.cellForRow(at: indexPath)
@@ -154,7 +154,7 @@ extension TodoListView: TodoTableViewCellDelegate {
     }
 }
 
-extension TodoListView: ContextMenuViewControllerDelegate {
+extension TodoListView: ContextMenuDelegate {
     func contextMenuDidSelectEdit() {
         guard let todo = currentContextTodo else { return }
         output?.editTodo(todo)

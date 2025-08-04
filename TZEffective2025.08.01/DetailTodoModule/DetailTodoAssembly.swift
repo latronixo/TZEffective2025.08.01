@@ -15,9 +15,10 @@ class DetailTodoAssembly {
         
         let presenter = DetailTodoPresenter(interactor: interactor, view: view, router: router)
         
-        interactor.output = presenter
         view.output = presenter
+        interactor.output = presenter
         router.viewController = view
+        presenter.output = view
         
         let navigationController = UINavigationController(rootViewController: view)
         return navigationController        

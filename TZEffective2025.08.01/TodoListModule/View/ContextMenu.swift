@@ -7,15 +7,15 @@
 
 import UIKit
 
-protocol ContextMenuViewControllerDelegate: AnyObject {
+protocol ContextMenuDelegate: AnyObject {
     func contextMenuDidSelectEdit()
     func contextMenuDidSelectShare()
     func contextMenuDidSelectDelete()
 }
 
-class ContextMenuViewController: UIViewController {
+class ContextMenu: UIViewController {
     
-    weak var delegate: ContextMenuViewControllerDelegate?
+    weak var delegate: ContextMenuDelegate?
     
     private let containerView: UIView = {
         let view = UIView()
