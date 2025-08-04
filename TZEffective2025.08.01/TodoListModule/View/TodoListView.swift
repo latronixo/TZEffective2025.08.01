@@ -28,6 +28,7 @@ final class TodoListView: UIViewController, TodoListViewInput {
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     
     private var todos: [TodoItemViewModel] = []
+    private var currentContextTodo: TodoItemViewModel?
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -142,40 +143,33 @@ extension TodoListView: TodoTableViewCellDelegate {
     }
     
     func showContextMenu(for todo: TodoItemViewModel, at indexPath: IndexPath) {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        currentContextTodo = todo
         
-        // Добавляем действия
-        let editAction = UIAlertAction(title: "Редактировать", style: .default) { _ in
-            self.output?.editTodo(todo)
-        }
-        editAction.setValue(UIImage(systemName: "pencil"), forKey: "image")
+        let contextMenu = ContextMenuViewController()
+        contextMenu.delegate = self
         
-        let shareAction = UIAlertAction(title: "Поделиться", style: .default) { _ in
-            self.output?.shareTodo(todo)
-        }
-        shareAction.setValue(UIImage(systemName: "square.and.arrow.up"), forKey: "image")
+        // Позиционируем меню рядом с ячейкой
+        let cell = tableView.cellForRow(at: indexPath)
+        let cellFrame = cell?.convert(cell?.bounds ?? CGRect.zero, to: view) ?? CGRect.zero
         
-        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { _ in
-            self.output?.deleteTodo(todo.id)
-        }
-        deleteAction.setValue(UIImage(systemName: "trash"), forKey: "image")
-        
-        alert.addAction(editAction)
-        alert.addAction(shareAction)
-        alert.addAction(deleteAction)
-        
-        // Добавляем действие отмены
-        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
-        
-        // Настраиваем popover для iPad
-        if let popover = alert.popoverPresentationController {
-            let cell = tableView.cellForRow(at: indexPath)
-            popover.sourceView = cell
-            popover.sourceRect = cell?.bounds ?? CGRect.zero
-            popover.permittedArrowDirections = [.up, .down]
-        }
-        
-        present(alert, animated: true)
+        contextMenu.presentFrom(viewController: self, sourceView: cell ?? view)
+    }
+}
+
+extension TodoListView: ContextMenuViewControllerDelegate {
+    func contextMenuDidSelectEdit() {
+        guard let todo = currentContextTodo else { return }
+        output?.editTodo(todo)
+    }
+    
+    func contextMenuDidSelectShare() {
+        guard let todo = currentContextTodo else { return }
+        output?.shareTodo(todo)
+    }
+    
+    func contextMenuDidSelectDelete() {
+        guard let todo = currentContextTodo else { return }
+        output?.deleteTodo(todo.id)
     }
 }
 
