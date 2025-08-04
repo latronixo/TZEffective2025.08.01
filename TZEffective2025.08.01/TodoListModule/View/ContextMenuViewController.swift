@@ -19,7 +19,7 @@ class ContextMenuViewController: UIViewController {
     
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 0.95)
+        view.backgroundColor = #colorLiteral(red: 0.7490196824, green: 0.7490196824, blue: 0.7490196824, alpha: 1)
         view.layer.cornerRadius = 12
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -32,37 +32,20 @@ class ContextMenuViewController: UIViewController {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 0
-        stack.distribution = .fillEqually
         return stack
     }()
     
-    private let editButton = createMenuButton(title: "Редактировать", iconName: "edit")
-    private let shareButton = createMenuButton(title: "Поделиться", iconName: "share")
-    private let deleteButton = createMenuButton(title: "Удалить", iconName: "trash", isDestructive: true)
+    private let editView = createMenuView(title: "Редактировать", iconName: "edit")
+    private let shareView = createMenuView(title: "Поделиться", iconName: "share")
+    private let deleteView = createMenuView(title: "Удалить", iconName: "trash", isDestructive: true)
     
+    private let separator1 = createSeparator()
+    private let separator2 = createSeparator()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setupActions()
-    }
-    
-    private static func createMenuButton(title: String, iconName: String, isDestructive: Bool = false) -> UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle(title, for: .normal)
-        button.setTitleColor(isDestructive ? UIColor.red : UIColor.white, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.backgroundColor = .clear
-        button.contentHorizontalAlignment = .left
-        button.contentEdgeInsets = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
-        
-        if let icon = UIImage(named: iconName) {
-            button.setImage(icon, for: .normal)
-            button.tintColor = isDestructive ? UIColor.red : UIColor.white
-            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
-            button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
-        }
-        
-        return button
     }
     
     private func setupViews() {
@@ -71,9 +54,11 @@ class ContextMenuViewController: UIViewController {
         view.addSubview(containerView)
         containerView.addSubview(stackView)
         
-        stackView.addArrangedSubview(editButton)
-        stackView.addArrangedSubview(shareButton)
-        stackView.addArrangedSubview(deleteButton)
+        stackView.addArrangedSubview(editView)
+        stackView.addArrangedSubview(separator1)
+        stackView.addArrangedSubview(shareView)
+        stackView.addArrangedSubview(separator2)
+        stackView.addArrangedSubview(deleteView)
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +67,10 @@ class ContextMenuViewController: UIViewController {
             stackView.topAnchor.constraint(equalTo: containerView.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+            stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            
+            separator1.heightAnchor.constraint(equalToConstant: 0.5),
+            separator2.heightAnchor.constraint(equalToConstant: 0.5),
         ])
         
         // Добавляем tap gesture для закрытия меню при тапе вне его
@@ -91,9 +79,67 @@ class ContextMenuViewController: UIViewController {
     }
     
     private func setupActions() {
-        editButton.addTarget(self, action: #selector(editTapped), for: .touchUpInside)
-        shareButton.addTarget(self, action: #selector(shareTapped), for: .touchUpInside)
-        deleteButton.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
+        let editTap = UITapGestureRecognizer(target: self, action: #selector(editTapped))
+        let shareTap = UITapGestureRecognizer(target: self, action: #selector(shareTapped))
+        let deleteTap = UITapGestureRecognizer(target: self, action: #selector(deleteTapped))
+        
+        editView.addGestureRecognizer(editTap)
+        shareView.addGestureRecognizer(shareTap)
+        deleteView.addGestureRecognizer(deleteTap)
+     }
+    
+    private static func createMenuView(title: String, iconName: String, isDestructive: Bool = false) -> UIView {
+        let buttonView = UIView()
+        buttonView.backgroundColor = .clear
+        
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        titleLabel.textColor = isDestructive ? UIColor.red : UIColor(red: 0.28, green: 0.28, blue: 0.28, alpha: 1.0)
+        
+        let iconImageView = UIImageView()
+        if let icon = UIImage(named: iconName) {
+            iconImageView.image = icon
+            iconImageView.contentMode = .scaleAspectFit
+            iconImageView.tintColor = isDestructive ? UIColor.red : UIColor(red: 0.28, green: 0.28, blue: 0.28, alpha: 1.0)
+        }
+        
+        let emptyView = UIView()
+        
+        buttonView.addSubview(titleLabel)
+        buttonView.addSubview(emptyView)
+        buttonView.addSubview(iconImageView)
+        
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        emptyView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: buttonView.leadingAnchor, constant: 16),
+            titleLabel.centerYAnchor.constraint(equalTo: buttonView.centerYAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: emptyView.leadingAnchor),
+
+            emptyView.topAnchor.constraint(equalTo: buttonView.topAnchor),
+            emptyView.widthAnchor.constraint(greaterThanOrEqualToConstant: 120),
+            emptyView.heightAnchor.constraint(equalToConstant: 50),
+            emptyView.bottomAnchor.constraint(equalTo: buttonView.bottomAnchor),
+            
+            iconImageView.leadingAnchor.constraint(equalTo: emptyView.trailingAnchor),
+            iconImageView.trailingAnchor.constraint(equalTo: buttonView.trailingAnchor, constant: -16),
+            iconImageView.centerYAnchor.constraint(equalTo: buttonView.centerYAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: 20),
+            iconImageView.heightAnchor.constraint(equalToConstant: 20),
+            
+        ])
+        
+        return buttonView
+    }
+    
+    private static func createSeparator() -> UIView {
+        let separator = UIView()
+        separator.backgroundColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        return separator
     }
     
     @objc private func backgroundTapped() {
@@ -127,7 +173,7 @@ class ContextMenuViewController: UIViewController {
             let sourceFrame = sourceView.convert(sourceView.bounds, to: self.view)
             
             // Вычисляем позицию меню
-            let menuWidth: CGFloat = 200
+            let menuWidth: CGFloat = 300
             let menuHeight: CGFloat = 150 // Примерная высота для 3 кнопок
             
             var xPosition = sourceFrame.midX - menuWidth / 2

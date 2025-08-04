@@ -148,9 +148,7 @@ extension TodoListView: TodoTableViewCellDelegate {
         let contextMenu = ContextMenuViewController()
         contextMenu.delegate = self
         
-        // Позиционируем меню рядом с ячейкой
         let cell = tableView.cellForRow(at: indexPath)
-        let cellFrame = cell?.convert(cell?.bounds ?? CGRect.zero, to: view) ?? CGRect.zero
         
         contextMenu.presentFrom(viewController: self, sourceView: cell ?? view)
     }
