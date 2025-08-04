@@ -54,14 +54,21 @@ final class TodoListView: UIViewController, TodoListViewInput {
     }
     
     private func setupViews() {
-        view.backgroundColor = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        view.backgroundColor = .black
         
         // Search Bar
         searchBar.placeholder = "Search"
+        let textField = searchBar.searchTextField
+        textField.textColor = .white
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Search",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+        )
+        
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
         searchBar.barTintColor = .clear
-        searchBar.backgroundColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1.0)
+        searchBar.backgroundColor = .black
         searchBar.tintColor = .white
         
         // TableView
