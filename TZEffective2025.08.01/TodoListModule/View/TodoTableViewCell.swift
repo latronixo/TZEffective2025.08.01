@@ -9,7 +9,7 @@ import UIKit
 
 protocol TodoTableViewCellDelegate: AnyObject {
     func todoCellDidToggle(_ cell: TodoTableViewCell)
-    func todoCellDidLongPress(_ cell: TodoTableViewCell)
+    func todoCellDidTap(_ cell: TodoTableViewCell)
 }
 
 class TodoTableViewCell: UITableViewCell {
@@ -107,7 +107,7 @@ class TodoTableViewCell: UITableViewCell {
             
         ])
         
-        setupLongPressGesture()
+        setupTapGesture()
     }
     
     func configure(with todo: TodoItemViewModel) {
@@ -169,13 +169,13 @@ class TodoTableViewCell: UITableViewCell {
         delegate = nil
     }
     
-    private func setupLongPressGesture() {
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-        addGestureRecognizer(longPressGesture)
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        containerView.addGestureRecognizer(tapGesture)
     }
     
-    @objc private func handleLongPress () {
-        delegate?.todoCellDidLongPress(self)
+    @objc private func handleTap() {
+        delegate?.todoCellDidTap(self)
     }
     
     @objc private func checkmarkTapped() {
