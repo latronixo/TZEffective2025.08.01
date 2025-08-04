@@ -19,8 +19,8 @@ class TodoListAssembly {
                                         router: router,
                                         view: view)
         
-        interactor.output = presenter
         view.output = presenter
+        interactor.output = presenter
         presenter.output = view
         router.rootViewController = view
         

@@ -173,7 +173,7 @@ class ContextMenu: UIViewController {
             let sourceFrame = sourceView.convert(sourceView.bounds, to: self.view)
             
             // Вычисляем позицию меню
-            let menuWidth: CGFloat = 300
+            let menuWidth: CGFloat = 305
             let menuHeight: CGFloat = 150 // Примерная высота для 3 кнопок
             
             var xPosition = sourceFrame.midX - menuWidth / 2
