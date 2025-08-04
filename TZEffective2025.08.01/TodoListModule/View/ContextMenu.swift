@@ -49,7 +49,20 @@ class ContextMenu: UIViewController {
     }
     
     private func setupViews() {
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        //создаем размытость
+        let blurEffect = UIBlurEffect(style: .systemChromeMaterialDark)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = view.bounds
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        view.addSubview(blurView)
+        
+        //добавляем полупрозрачный overlay поверх blur
+        let overlayView = UIView()
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        overlayView.frame = view.bounds
+        overlayView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        //view.addSubview(overlayView)
         
         view.addSubview(containerView)
         containerView.addSubview(stackView)
