@@ -12,6 +12,7 @@ protocol TodoListPresenterInput {
     func viewDidLoad()
     func searchTextChanged(_ text: String)
     func todoToggled(id: Int)
+    func updateTodoAfterEdit(id: Int, title: String, description: String)
 }
 
 protocol TodoListPresenterOutput: AnyObject {
@@ -32,6 +33,22 @@ final class TodoListPresenter {
         self.interactor = interactor
         self.router = router
         self.view = view
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(todoUpdated),
+            name: NSNotification.Name("TodoUpdated"),
+            object: nil
+        )
+    }
+    
+    @objc private func todoUpdated(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let id = userInfo["id"] as? Int,
+              let title = userInfo["title"] as? String,
+              let description = userInfo["description"] as? String else { return }
+        
+        updateTodoAfterEdit(id: id, title: title, description: description)
     }
 }
 
@@ -51,6 +68,7 @@ extension TodoListPresenter: TodoListViewOutput {
     
     func editTodo(_ todo: TodoItemViewModel) {
         router.openDetailScreen(with: todo)
+        
     }
     
     func shareTodo(_ todo: TodoItemViewModel) {
@@ -59,6 +77,10 @@ extension TodoListPresenter: TodoListViewOutput {
     
     func deleteTodo(_ id: Int) {
         interactor.deleteTodo(id)
+    }
+    
+    func updateTodoAfterEdit(id: Int, title: String, description: String) {
+        interactor.updateTodo(id: id, title: title, description: description)
     }
 }
 

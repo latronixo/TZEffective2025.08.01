@@ -137,4 +137,13 @@ extension DetailTodoView: DetailTodoPresenterOutput {
     func closeView() {
         dismiss(animated: true)
     }
+    
+    func updateTodoInList(id: Int, title: String, description: String) {
+        // Вызываем обновление через NotificationCenter
+        NotificationCenter.default.post(
+            name: NSNotification.Name("TodoUpdated"),
+            object: nil,
+            userInfo: ["id": id, "title": title, "description": description]
+        )
+    }
 }

@@ -15,7 +15,7 @@ protocol DetailTodoInteractorInput {
 
 protocol DetailTodoInteractorOutput: AnyObject {
     func didLoadTodo(_ todo: TodoItemViewModel)
-    func didSaveTodo()
+    func didSaveTodo(id: Int, title: String, description: String)
     func didReceiveError(_ error: String)
 }
 
@@ -36,7 +36,7 @@ final class DetailTodoInteractor: DetailTodoInteractorInput {
     
     func saveTodo(title: String, description: String) {
         coreDataService.updateTodo(id: todo.id, title: title, description: description)
-        output?.didSaveTodo()
+        output?.didSaveTodo(id: todo.id, title: title, description: description)
     }
 }
 

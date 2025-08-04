@@ -14,6 +14,7 @@ protocol TodoListInteractorInput {
     func searchTodos(with query: String)
     func toggleTodoCompletion(id: Int)
     func deleteTodo(_ id: Int)
+    func updateTodo(id: Int, title: String, description: String)
 }
 
 protocol TodoListInteractorOutput: AnyObject {
@@ -103,6 +104,22 @@ final class TodoListInteractor: TodoListInteractorInput {
             coreDataService.deleteTodo(id)
             allTodos.remove(at: index)
             output?.didDeleteTodo(allTodos)
+        }
+    }
+ 
+    //метод перезагрузки только что отредактированной задачи в tableView
+    func updateTodo(id: Int, title: String, description: String) {
+        if let index = allTodos.firstIndex(where: { $0.id == id }) {
+            allTodos[index] = TodoItemViewModel(
+                id: allTodos[index].id,
+                title: title,
+                describe: description,
+                isCompleted: allTodos[index].isCompleted,
+                createdAt: allTodos[index].createdAt,
+                userId: allTodos[index].userId
+            )
+
+            output?.didUpdateTodos(allTodos)
         }
     }
 
