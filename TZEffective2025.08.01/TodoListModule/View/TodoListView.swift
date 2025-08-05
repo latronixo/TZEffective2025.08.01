@@ -30,7 +30,7 @@ final class TodoListView: UIViewController, TodoListViewInput {
     
     private let bottomPanel: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0.55294118, green: 0.55294118, blue: 0.55686275, alpha: 1.0)
+        view.backgroundColor = UIColor(red: 0.1513492465, green: 0.1513496935, blue: 0.1604961455, alpha: 1)
         return view
     }()
     
@@ -135,12 +135,12 @@ final class TodoListView: UIViewController, TodoListViewInput {
             
             bottomPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomPanel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            bottomPanel.heightAnchor.constraint(equalToConstant: 60),
+            bottomPanel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomPanel.heightAnchor.constraint(equalToConstant: 90),
            
+            tasksCountLabel.topAnchor.constraint(equalTo: bottomPanel.topAnchor, constant: 20),
             tasksCountLabel.centerXAnchor.constraint(equalTo: bottomPanel.centerXAnchor),
-            tasksCountLabel.centerYAnchor.constraint(equalTo: bottomPanel.centerYAnchor),
-
+            
             addButton.trailingAnchor.constraint(equalTo: bottomPanel.trailingAnchor, constant: -16),
             addButton.topAnchor.constraint(equalTo: bottomPanel.topAnchor, constant: 16),
             addButton.widthAnchor.constraint(equalToConstant: 30),
