@@ -21,12 +21,6 @@ class ContextMenu: UIViewController {
     // Основной контейнер для всего меню
      private let containerView: UIView = {
          let view = UIView()
-         view.backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
-         view.layer.cornerRadius = 12
-         view.layer.shadowColor = UIColor.black.cgColor
-         view.layer.shadowOffset = CGSize(width: 0, height: 4)
-         view.layer.shadowRadius = 8
-         view.layer.shadowOpacity = 0.3
          return view
      }()
     
@@ -46,8 +40,7 @@ class ContextMenu: UIViewController {
     
     private let separator1 = createSeparator()
     private let separator2 = createSeparator()
-    private let separator3 = createSeparator()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -66,12 +59,12 @@ class ContextMenu: UIViewController {
         
         let titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.28, green: 0.28, blue: 0.28, alpha: 1.0)
+        titleLabel.textColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
         titleLabel.numberOfLines = 1
         
         let descriptionLabel = UILabel()
         descriptionLabel.font = UIFont.systemFont(ofSize: 14)
-        descriptionLabel.textColor = UIColor(red: 0.45, green: 0.45, blue: 0.45, alpha: 1.0)
+        descriptionLabel.textColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
         descriptionLabel.numberOfLines = 0
         
         let dateLabel = UILabel()
@@ -125,46 +118,43 @@ class ContextMenu: UIViewController {
     
     private func setupViews() {
         //создаем размытость
-        let blurEffect = UIBlurEffect(style: .systemChromeMaterialDark)
+        let blurEffect = UIBlurEffect(style: .dark)
         let blurView = UIVisualEffectView(effect: blurEffect)
         blurView.frame = view.bounds
         blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         view.addSubview(blurView)
         view.addSubview(containerView)
+        containerView.addSubview(todoInfoView)
         containerView.addSubview(stackView)
         
-        stackView.addArrangedSubview(todoInfoView)
-        stackView.addArrangedSubview(separator1)
+        stackView.layer.cornerRadius = 8
+        stackView.backgroundColor = UIColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 1.0)
+        
         stackView.addArrangedSubview(editView)
-        stackView.addArrangedSubview(separator2)
+        stackView.addArrangedSubview(separator1)
         stackView.addArrangedSubview(shareView)
-        stackView.addArrangedSubview(separator3)
+        stackView.addArrangedSubview(separator2)
         stackView.addArrangedSubview(deleteView)
         
-        
         containerView.translatesAutoresizingMaskIntoConstraints = false
+        todoInfoView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        //todoInfoView.translatesAutoresizingMaskIntoConstraints = false
+        
+        separator1.translatesAutoresizingMaskIntoConstraints = false
+        separator2.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-//            todoInfoView.widthAnchor.constraint(equalToConstant: 300),
-//            todoInfoView.heightAnchor.constraint(equalToConstant: 80),
+            todoInfoView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            todoInfoView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            todoInfoView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            todoInfoView.heightAnchor.constraint(lessThanOrEqualToConstant: 100),
             
-//            containerView.topAnchor.constraint(equalTo: todoDisplayView.bottomAnchor, constant: 8),
-//            containerView.leadingAnchor.constraint(equalTo: todoDisplayView.leadingAnchor),
-//            containerView.trailingAnchor.constraint(equalTo: todoDisplayView.trailingAnchor),
-            
-            stackView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: todoInfoView.bottomAnchor, constant: 16),
+            stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 36),
             stackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             
-//            todoInfoView.topAnchor.constraint(equalTo: todoDisplayView.topAnchor),
-//            todoInfoView.leadingAnchor.constraint(equalTo: todoDisplayView.leadingAnchor),
-//            todoInfoView.trailingAnchor.constraint(equalTo: todoDisplayView.trailingAnchor),
-//            todoInfoView.bottomAnchor.constraint(equalTo: todoDisplayView.bottomAnchor),
-//            
             separator1.heightAnchor.constraint(equalToConstant: 0.5),
             separator2.heightAnchor.constraint(equalToConstant: 0.5),
         ])
@@ -186,7 +176,6 @@ class ContextMenu: UIViewController {
     
     private static func createMenuView(title: String, iconName: String, isDestructive: Bool = false) -> UIView {
         let buttonView = UIView()
-        buttonView.backgroundColor = .clear
         
         let titleLabel = UILabel()
         titleLabel.text = title
@@ -265,26 +254,31 @@ class ContextMenu: UIViewController {
         modalTransitionStyle = .crossDissolve
         
         viewController.present(self, animated: false) {
-            // Вычисляем позицию меню после показа
+            // Позиционируем меню рядом с ячейкой
             let sourceFrame = sourceView.convert(sourceView.bounds, to: self.view)
-            
-            //вычисляем позицию меню
-            let menuWidth: CGFloat = 300
-            let menuHeight: CGFloat = 200
-            
-            var xPosition = sourceFrame.midX - menuWidth / 2
-            var yPosition = sourceFrame.maxY + 8
-            
-            //Проверяем, не вызодит ли меню за границы экрана
             let screenBounds = UIScreen.main.bounds
-            if xPosition + menuWidth > screenBounds.width - 16 {
-                xPosition = screenBounds.width - menuWidth - 16
+            print(sourceFrame.width)
+            
+            //Фиксированная позиция и ширина
+            let xPosition: CGFloat = 25
+            var yPosition = sourceFrame.minY
+            let menuWidth: CGFloat = sourceFrame.width - 50
+
+            //Вычисляем высоту на основе содержимого
+            var menuHeight: CGFloat = 300
+            
+            //если description многострочный, увеличиваем высоту
+            if let todo = self.todo {
+                let descriptionLines = Int(todo.describe.count / 40)
+                if descriptionLines > 1 {
+                    let additionalHeight = CGFloat(descriptionLines - 1) * 20 // 20 пунктов на дополнительную строку
+                    menuHeight += additionalHeight
+                }
             }
-            if xPosition < 16 {
-                xPosition = 16
-            }
+            
+            //Проверяем, не выходит ли меню за нижний край экрана
             if yPosition + menuHeight > screenBounds.height - 16 {
-                yPosition = sourceFrame.minY - menuHeight - 8
+                yPosition = screenBounds.height - menuHeight - 16
             }
             
             self.containerView.frame = CGRect(x: xPosition, y: yPosition, width: menuWidth, height: menuHeight)
@@ -292,14 +286,10 @@ class ContextMenu: UIViewController {
             // Анимация появления
             self.containerView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
             self.containerView.alpha = 0
-//            self.menuContainerView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-//            self.menuContainerView.alpha = 0
             
             UIView.animate(withDuration: 0.2) {
                 self.containerView.transform = .identity
                 self.containerView.alpha = 1
-//                self.menuContainerView.transform = .identity
-//                self.menuContainerView.alpha = 1
             }
         }
     }
