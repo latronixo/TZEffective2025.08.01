@@ -16,15 +16,14 @@ class TodoTableViewCell: UITableViewCell {
     weak var delegate: TodoTableViewCellDelegate?
     private lazy var containerView: UIView = {
         let element = UIView()
-        element.backgroundColor = UIColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.0)
-        element.layer.cornerRadius = 8
+        element.backgroundColor = UIColor(red: 4/255, green: 4/255, blue: 4/255, alpha: 1.0)
         return element
     }()
     private lazy var titleLabel: UILabel = {
         let element = UILabel()
         element.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         element.textColor = .white
-        element.numberOfLines = 2
+        element.numberOfLines = 1
         
         return element
     }()
@@ -88,12 +87,12 @@ class TodoTableViewCell: UITableViewCell {
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             
-            checkmarkButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            checkmarkButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            checkmarkButton.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
+            checkmarkButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
             checkmarkButton.widthAnchor.constraint(equalToConstant: 24),
             checkmarkButton.heightAnchor.constraint(equalToConstant: 24),
             
-            titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+            titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: checkmarkButton.trailingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             
@@ -101,7 +100,7 @@ class TodoTableViewCell: UITableViewCell {
             descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
             
-            dateLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 4),
+            //dateLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
             dateLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             dateLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12),
             

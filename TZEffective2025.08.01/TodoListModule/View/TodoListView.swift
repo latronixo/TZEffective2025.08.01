@@ -73,7 +73,9 @@ final class TodoListView: UIViewController, TodoListViewInput {
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.register(TodoTableViewCell.self, forCellReuseIdentifier: "TodoCell")
-        
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = UIColor(red: 78/255, green: 85/255, blue: 93/255, alpha: 1.0)
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         loadingIndicator.color = .white
         loadingIndicator.hidesWhenStopped = true
         
@@ -120,7 +122,12 @@ extension TodoListView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        print("todos[indexPath.row].describe.count = \(todos[indexPath.row].describe.count)")
+        if todos[indexPath.row].describe.count < 45 {
+            return 90
+        } else {
+            return 110
+        }
     }
 }
 
