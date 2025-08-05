@@ -57,12 +57,17 @@ final class TodoListView: UIViewController, TodoListViewInput {
         view.backgroundColor = .black
         
         searchBar.placeholder = "Search"
+        let searchBarTintColor = UIColor(red: 0.55294118, green: 0.55294118, blue: 0.55686275, alpha: 1.0)
         let textField = searchBar.searchTextField
         textField.textColor = .white
+        textField.backgroundColor = UIColor(red: 0.15294118, green: 0.15294118, blue: 0.16078431, alpha: 1.0)
         textField.attributedPlaceholder = NSAttributedString(
             string: "Search",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
         )
+        if let searchImageView = textField.leftView as? UIImageView {
+            searchImageView.tintColor = searchBarTintColor
+        }
         
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
@@ -105,6 +110,23 @@ final class TodoListView: UIViewController, TodoListViewInput {
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        let textField = searchBar.searchTextField
+        let searchBarTintColor = UIColor(red: 0.55294118, green: 0.55294118, blue: 0.55686275, alpha: 1.0)
+        
+        let microphoneButton = UIButton(type: .system)
+        let microphoneImage = UIImage(systemName: "mic.fill")?.withConfiguration(
+            UIImage.SymbolConfiguration(pointSize: 14, weight: .medium) // Измените pointSize для размера
+        )
+        microphoneButton.setImage(microphoneImage, for: .normal)
+        microphoneButton.tintColor = searchBarTintColor
+        
+        textField.rightView = microphoneButton
+        textField.rightViewMode = .always
     }
 }
 
