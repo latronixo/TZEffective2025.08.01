@@ -56,7 +56,6 @@ final class TodoListView: UIViewController, TodoListViewInput {
     private func setupViews() {
         view.backgroundColor = .black
         
-        // Search Bar
         searchBar.placeholder = "Search"
         let textField = searchBar.searchTextField
         textField.textColor = .white
@@ -71,21 +70,17 @@ final class TodoListView: UIViewController, TodoListViewInput {
         searchBar.backgroundColor = .black
         searchBar.tintColor = .white
         
-        // TableView
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.register(TodoTableViewCell.self, forCellReuseIdentifier: "TodoCell")
         
-        // Loading Indicator
         loadingIndicator.color = .white
         loadingIndicator.hidesWhenStopped = true
         
-        // Add to view hierarchy
         view.addSubview(searchBar)
         view.addSubview(tableView)
         view.addSubview(loadingIndicator)
         
-        // Constraints
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -154,6 +149,7 @@ extension TodoListView: TodoTableViewCellDelegate {
         
         let contextMenu = ContextMenu()
         contextMenu.delegate = self
+        contextMenu.configure(with: todo)
         
         let cell = tableView.cellForRow(at: indexPath)
         
