@@ -18,7 +18,7 @@ protocol DetailTodoPresenterOutput: AnyObject {
     func displayTodo(_ todo: TodoItemViewModel)
     func showError(_ message: String)
     func closeView()
-    func updateTodoInList(id: Int, title: String, description: String)
+    func updateTodoInList(id: Int, title: String, description: String, isNew: Bool)
 }
 
 final class DetailTodoPresenter {
@@ -63,12 +63,9 @@ extension DetailTodoPresenter: DetailTodoInteractorOutput {
         output?.displayTodo(todo)
     }
     
-    func didSaveTodo(id: Int, title: String, description: String) {
-        guard let detailView = view as? DetailTodoView else { return }
-        let editedData  = detailView.getEditedData()
-        
+    func didSaveTodo(id: Int, title: String, description: String, isNew: Bool) {
         //пробрасываем для обновления задачи в основном списке
-        output?.updateTodoInList(id: id, title: title, description: description)
+        output?.updateTodoInList(id: id, title: title, description: description, isNew: isNew)
         
         output?.closeView()
     }

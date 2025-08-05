@@ -17,6 +17,7 @@ protocol TodoCoreDataServiceProtocol {
     func updateTodoCompletion(id: Int, isCompleted: Bool)
     func updateTodo(id: Int, title: String, description: String)
     func deleteTodo(_ id: Int)
+    func createTodo(title: String, description: String) -> Int
 }
 
 class TodoCoreDataService: TodoCoreDataServiceProtocol {
@@ -56,6 +57,8 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
     func fetchTodos() -> [NSManagedObject] {
         let context = container.viewContext
         let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
         
         do {
             return try context.fetch(request)
@@ -132,6 +135,44 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
             }
         } catch {
             print("Error deleting todo: \(error)")
+        }
+    }
+    
+    func createTodo(title: String, description: String) -> Int {
+        let context = container.viewContext
+        let todoItem = NSEntityDescription.insertNewObject(forEntityName: "TodoItem", into: context)
+        
+        //генерируем новый id
+        let maxId = fetchMaxId()
+        let newId = maxId + 1
+        
+        todoItem.setValue(newId, forKey: "id")
+        todoItem.setValue(title, forKey: "title")
+        todoItem.setValue(description, forKey: "describe")
+        todoItem.setValue(false, forKey: "completed")
+        todoItem.setValue(1, forKey: "userId")
+        todoItem.setValue(Date(), forKey: "createdAt")
+
+        do {
+            try context.save()
+            return newId
+        } catch {
+            print("Error creating todo: \(error)")
+            return 0
+        }
+    }
+    private func fetchMaxId() -> Int {
+        let context = container.viewContext
+        let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+        request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: false)]
+        request.fetchLimit = 1
+        
+        do {
+            let results = try context.fetch(request)
+            return results.first?.value(forKey: "id") as? Int ?? 0
+        } catch {
+            print("Error fetching max id: \(error)")
+            return 0
         }
     }
 }

@@ -48,7 +48,11 @@ final class TodoListPresenter {
               let title = userInfo["title"] as? String,
               let description = userInfo["description"] as? String else { return }
         
-        updateTodoAfterEdit(id: id, title: title, description: description)
+        if let isNew = userInfo["isNew"] as? Bool, isNew {
+            interactor.loadTodos()
+        } else {
+            updateTodoAfterEdit(id: id, title: title, description: description)
+        }
     }
 }
 
@@ -81,6 +85,10 @@ extension TodoListPresenter: TodoListViewOutput {
     
     func updateTodoAfterEdit(id: Int, title: String, description: String) {
         interactor.updateTodo(id: id, title: title, description: description)
+    }
+    
+    func addNewTodo() {
+        router.openAddNewTodoScreen()
     }
 }
 

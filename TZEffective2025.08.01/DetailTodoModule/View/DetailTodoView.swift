@@ -45,14 +45,14 @@ final class DetailTodoView: UIViewController, DetailTodoViewInput {
             title: "Назад",
             style: .plain,
             target: self,
-            action: #selector(backButtonTapped)
-        )
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Сохранить",
-            style: .plain,
-            target: self,
             action: #selector(saveButtonTapped)
         )
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(
+//            title: "Сохранить",
+//            style: .plain,
+//            target: self,
+//            action: #selector(saveButtonTapped)
+//        )
     }
     
     private func setupViews() {
@@ -138,12 +138,17 @@ extension DetailTodoView: DetailTodoPresenterOutput {
         dismiss(animated: true)
     }
     
-    func updateTodoInList(id: Int, title: String, description: String) {
+    func updateTodoInList(id: Int, title: String, description: String, isNew: Bool) {
         // Вызываем обновление через NotificationCenter
         NotificationCenter.default.post(
             name: NSNotification.Name("TodoUpdated"),
             object: nil,
-            userInfo: ["id": id, "title": title, "description": description]
+            userInfo: [
+                "id": id,
+                "title": title,
+                "description": description,
+                "isNew": isNew
+            ]
         )
     }
 }

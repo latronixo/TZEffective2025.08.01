@@ -10,6 +10,7 @@ import UIKit
 protocol TodoListRouterInput {
     func openDetailScreen(with todo: TodoItemViewModel)
     func shareTodo(with todo: TodoItemViewModel)
+    func openAddNewTodoScreen()
 }
 
 final class TodoListRouter: TodoListRouterInput {
@@ -30,6 +31,10 @@ final class TodoListRouter: TodoListRouterInput {
         let text = "Задача: \(todo.title)\nОписание: \(todo.describe)"
         let activityViewController = UIActivityViewController(activityItems: [text], applicationActivities: nil)
         rootViewController?.present(activityViewController, animated: true)
-
+    }
+    
+    func openAddNewTodoScreen() {
+        let detailModule = DetailTodoAssembly.assembleDetailTodoModule(todo: nil, coreDataService: coreDataService)
+        rootViewController?.present(detailModule, animated: true)
     }
 }

@@ -191,7 +191,6 @@ extension TodoListView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        print("todos[indexPath.row].describe.count = \(todos[indexPath.row].describe.count)")
         if todos[indexPath.row].describe.count < 45 {
             return 90
         } else {
