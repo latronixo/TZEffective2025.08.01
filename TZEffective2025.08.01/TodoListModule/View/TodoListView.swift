@@ -18,6 +18,7 @@ protocol TodoListViewOutput: AnyObject {
     func editTodo(_ todo: TodoItemViewModel)
     func shareTodo(_ todo: TodoItemViewModel)
     func deleteTodo(_ id: Int)
+    func addNewTodo()
 }
 
 final class TodoListView: UIViewController, TodoListViewInput {
@@ -26,6 +27,27 @@ final class TodoListView: UIViewController, TodoListViewInput {
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
+    
+    private let bottomPanel: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 0.55294118, green: 0.55294118, blue: 0.55686275, alpha: 1.0)
+        return view
+    }()
+    
+    private let tasksCountLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor(red: 0.9543994069, green: 0.9543994069, blue: 0.9543994069, alpha: 1.0)
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let addButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+        button.tintColor = UIColor(red: 0.9941777587, green: 0.8433876634, blue: 0.01378514804, alpha: 1.0)
+        return button
+    }()
     
     private var todos: [TodoItemViewModel] = []
     private var currentContextTodo: TodoItemViewModel?
@@ -87,10 +109,16 @@ final class TodoListView: UIViewController, TodoListViewInput {
         view.addSubview(searchBar)
         view.addSubview(tableView)
         view.addSubview(loadingIndicator)
+        view.addSubview(bottomPanel)
+        bottomPanel.addSubview(tasksCountLabel)
+        bottomPanel.addSubview(addButton)
         
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        bottomPanel.translatesAutoresizingMaskIntoConstraints = false
+        tasksCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        addButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -100,11 +128,30 @@ final class TodoListView: UIViewController, TodoListViewInput {
             tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: bottomPanel.topAnchor),
            
             loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            bottomPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomPanel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            bottomPanel.heightAnchor.constraint(equalToConstant: 60),
+           
+            tasksCountLabel.centerXAnchor.constraint(equalTo: bottomPanel.centerXAnchor),
+            tasksCountLabel.centerYAnchor.constraint(equalTo: bottomPanel.centerYAnchor),
+
+            addButton.trailingAnchor.constraint(equalTo: bottomPanel.trailingAnchor, constant: -16),
+            addButton.topAnchor.constraint(equalTo: bottomPanel.topAnchor, constant: 16),
+            addButton.widthAnchor.constraint(equalToConstant: 30),
+            addButton.heightAnchor.constraint(equalToConstant: 30),
         ])
+        
+        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func addButtonTapped() {
+        output?.addNewTodo()
     }
     
     private func setupTableView() {
@@ -208,6 +255,13 @@ extension TodoListView: TodoListPresenterOutput {
     func displayTodos(_ todos: [TodoItemViewModel]) {
         self.todos = todos
         tableView.reloadData()
+        updateTasksCount()
+    }
+    
+    private func updateTasksCount() {
+        let count = todos.count
+        let taskWord = count == 1 ? "задача" : (count >= 2 && count <= 4 ? "задачи" : "задач")
+        tasksCountLabel.text = "\(count) \(taskWord)"
     }
     
     func displayError(_ message: String) {
