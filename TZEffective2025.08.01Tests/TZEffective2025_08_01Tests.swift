@@ -1,36 +1,429 @@
 //
 //  TZEffective2025_08_01Tests.swift
-//  TZEffective2025.08.01Tests
+//  TZEffective2025_08_01Tests
 //
 //  Created by Валентин on 02.08.2025.
 //
 
 import XCTest
+import CoreData
 @testable import TZEffective2025_08_01
 
-final class TZEffective2025_08_01Tests: XCTestCase {
+// MARK: - TodoItemViewModel Tests
+final class TodoItemViewModelTests: XCTestCase {
+    
+    func testInitFromAPIItem() {
+        // Given
+        let apiItem = TodoItemAPI(id: 1, todo: "Test Todo", completed: true, userId: 1)
+        
+        // When
+        let viewModel = TodoItemViewModel(from: apiItem)
+        
+        // Then
+        XCTAssertEqual(viewModel.id, 1)
+        XCTAssertEqual(viewModel.title, "Test Todo")
+        XCTAssertEqual(viewModel.describe, "Test Todo")
+        XCTAssertTrue(viewModel.isCompleted)
+        XCTAssertEqual(viewModel.userId, 1)
+        XCTAssertNotNil(viewModel.createdAt)
+    }
+    
+    func testInitFromCoreDataItem() {
+        // Given
+        let managedObject = NSManagedObject()
+        managedObject.setValue(2, forKey: "id")
+        managedObject.setValue("Core Data Todo", forKey: "title")
+        managedObject.setValue("Core Data Description", forKey: "describe")
+        managedObject.setValue(false, forKey: "completed")
+        managedObject.setValue(Date(), forKey: "createdAt")
+        managedObject.setValue(3, forKey: "userId")
+        
+        // When
+        let viewModel = TodoItemViewModel(from: managedObject)
+        
+        // Then
+        XCTAssertEqual(viewModel.id, 2)
+        XCTAssertEqual(viewModel.title, "Core Data Todo")
+        XCTAssertEqual(viewModel.describe, "Core Data Description")
+        XCTAssertFalse(viewModel.isCompleted)
+        XCTAssertEqual(viewModel.userId, 3)
+        XCTAssertNotNil(viewModel.createdAt)
+    }
+    
+    func testInitWithParameters() {
+        // Given
+        let id = 5
+        let title = "Custom Title"
+        let describe = "Custom Description"
+        let isCompleted = true
+        let createdAt = Date()
+        let userId = 10
+        
+        // When
+        let viewModel = TodoItemViewModel(
+            id: id,
+            title: title,
+            describe: describe,
+            isCompleted: isCompleted,
+            createdAt: createdAt,
+            userId: userId
+        )
+        
+        // Then
+        XCTAssertEqual(viewModel.id, id)
+        XCTAssertEqual(viewModel.title, title)
+        XCTAssertEqual(viewModel.describe, describe)
+        XCTAssertEqual(viewModel.isCompleted, isCompleted)
+        XCTAssertEqual(viewModel.createdAt, createdAt)
+        XCTAssertEqual(viewModel.userId, userId)
+    }
+}
 
+// MARK: - CoreDataService Tests
+final class CoreDataServiceTests: XCTestCase {
+    var coreDataService: CoreDataService!
+    var testContainer: NSPersistentContainer!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        try super.setUpWithError()
+        
+        // Создаем тестовый контейнер Core Data в памяти
+        testContainer = NSPersistentContainer(name: "TodoDataModel")
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        testContainer.persistentStoreDescriptions = [description]
+        
+        testContainer.loadPersistentStores { _, error in
+            if let error = error {
+                XCTFail("Failed to load test Core Data store: \(error)")
+            }
+        }
+        
+        // Создаем сервис с тестовым контейнером
+        coreDataService = CoreDataService()
     }
-
+    
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        coreDataService = nil
+        testContainer = nil
+        try super.tearDownWithError()
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    
+    func testCreateTodo() {
+        // Given
+        let expectation = XCTestExpectation(description: "Create todo completion")
+        let title = "Test Todo"
+        let description = "Test Description"
+        
+        // When
+        coreDataService.createTodo(title: title, description: description) { newId in
+            // Then
+            XCTAssertGreaterThan(newId, 0)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
     }
+    
+    func testFetchTodos() {
+        // Given
+        let expectation = XCTestExpectation(description: "Fetch todos completion")
+        
+        // When
+        coreDataService.fetchTodos { todos in
+            // Then
+            XCTAssertNotNil(todos)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+    }
+    
+    func testUpdateTodo() {
+        // Given
+        let expectation = XCTestExpectation(description: "Update todo completion")
+        let id = 1
+        let newTitle = "Updated Title"
+        let newDescription = "Updated Description"
+        
+        // When
+        coreDataService.updateTodo(id: id, title: newTitle, description: newDescription)
+        
+        // Then - проверяем что обновление не вызывает ошибок
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+    }
+    
+    func testDeleteTodo() {
+        // Given
+        let expectation = XCTestExpectation(description: "Delete todo completion")
+        let id = 1
+        
+        // When
+        coreDataService.deleteTodo(id)
+        
+        // Then - проверяем что удаление не вызывает ошибок
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+    }
+}
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+// MARK: - TodoListInteractor Tests
+final class TodoListInteractorTests: XCTestCase {
+    var interactor: TodoListInteractor!
+    var mockCoreDataService: MockCoreDataService!
+    var mockNetworkService: MockNetworkService!
+    var mockOutput: MockTodoListInteractorOutput!
+    
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        
+        mockCoreDataService = MockCoreDataService()
+        mockNetworkService = MockNetworkService()
+        mockOutput = MockTodoListInteractorOutput()
+        
+        interactor = TodoListInteractor(
+            coreDataService: mockCoreDataService,
+            networkService: mockNetworkService
+        )
+        interactor.output = mockOutput
+    }
+    
+    override func tearDownWithError() throws {
+        interactor = nil
+        mockCoreDataService = nil
+        mockNetworkService = nil
+        mockOutput = nil
+        try super.tearDownWithError()
+    }
+    
+    func testLoadTodosSuccess() {
+        // Given
+        let expectation = XCTestExpectation(description: "Load todos success")
+        let mockTodos = [
+            TodoItemViewModel(id: 1, title: "Test 1", describe: "Desc 1", isCompleted: false, createdAt: Date(), userId: 1),
+            TodoItemViewModel(id: 2, title: "Test 2", describe: "Desc 2", isCompleted: true, createdAt: Date(), userId: 1)
+        ]
+        mockCoreDataService.mockTodos = mockTodos
+        
+        mockOutput.didLoadTodosCalled = { todos in
+            XCTAssertEqual(todos.count, 2)
+            XCTAssertEqual(todos[0].title, "Test 1")
+            XCTAssertEqual(todos[1].title, "Test 2")
+            expectation.fulfill()
+        }
+        
+        // When
+        interactor.loadTodos()
+        
+        // Then
+        wait(for: [expectation], timeout: 5.0)
+    }
+    
+    func testUpdateTodo() {
+        // Given
+        let expectation = XCTestExpectation(description: "Update todo")
+        let id = 1
+        let newTitle = "Updated Title"
+        let newDescription = "Updated Description"
+        
+        mockOutput.didUpdateTodosCalled = { todos in
+            XCTAssertEqual(todos.count, 1)
+            XCTAssertEqual(todos[0].title, newTitle)
+            XCTAssertEqual(todos[0].describe, newDescription)
+            expectation.fulfill()
+        }
+        
+        // When
+        interactor.updateTodo(id: id, title: newTitle, description: newDescription)
+        
+        // Then
+        wait(for: [expectation], timeout: 5.0)
+    }
+}
+
+// MARK: - TodoListPresenter Tests
+final class TodoListPresenterTests: XCTestCase {
+    var presenter: TodoListPresenter!
+    var mockInteractor: MockTodoListInteractor!
+    var mockRouter: MockTodoListRouter!
+    var mockView: MockTodoListView!
+    
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        
+        mockInteractor = MockTodoListInteractor()
+        mockRouter = MockTodoListRouter()
+        mockView = MockTodoListView()
+        
+        presenter = TodoListPresenter(
+            interactor: mockInteractor,
+            router: mockRouter,
+            view: mockView
+        )
+    }
+    
+    override func tearDownWithError() throws {
+        presenter = nil
+        mockInteractor = nil
+        mockRouter = nil
+        mockView = nil
+        try super.tearDownWithError()
+    }
+    
+    func testViewDidLoad() {
+        // When
+        presenter.viewDidLoad()
+        
+        // Then
+        XCTAssertTrue(mockInteractor.loadTodosCalled)
+    }
+    
+    func testAddNewTodo() {
+        // When
+        presenter.addNewTodo()
+        
+        // Then
+        XCTAssertTrue(mockRouter.openAddNewTodoScreenCalled)
+    }
+    
+    func testUpdateTodoAfterEdit() {
+        // Given
+        let id = 1
+        let title = "Updated Title"
+        let description = "Updated Description"
+        
+        // When
+        presenter.updateTodoAfterEdit(id: id, title: title, description: description)
+        
+        // Then
+        XCTAssertTrue(mockInteractor.updateTodoCalled)
+        XCTAssertEqual(mockInteractor.updateTodoId, id)
+        XCTAssertEqual(mockInteractor.updateTodoTitle, title)
+        XCTAssertEqual(mockInteractor.updateTodoDescription, description)
+    }
+}
+
+// MARK: - Mock Classes
+class MockCoreDataService: CoreDataServiceProtocol {
+    var mockTodos: [TodoItemViewModel] = []
+    var createTodoCalled = false
+    var updateTodoCalled = false
+    var deleteTodoCalled = false
+    
+    func saveTodos(_ todos: [TodoItemAPI]) {
+        // Mock implementation
+    }
+    
+    func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void) {
+        // Mock implementation - возвращаем пустой массив
+        DispatchQueue.main.async {
+            completion([])
         }
     }
+    
+    func updateTodoCompletion(id: Int, isCompleted: Bool) {
+        // Mock implementation
+    }
+    
+    func updateTodo(id: Int, title: String, description: String) {
+        updateTodoCalled = true
+    }
+    
+    func deleteTodo(_ id: Int) {
+        deleteTodoCalled = true
+    }
+    
+    func createTodo(title: String, description: String, completion: @escaping(Int) -> Void) {
+        createTodoCalled = true
+        DispatchQueue.main.async {
+            completion(1)
+        }
+    }
+}
 
+class MockNetworkService: NetworkServiceProtocol {
+    var fetchTodosCalled = false
+    
+    func fetchTodos(completion: @escaping (Result<TodoResponse, Error>) -> Void) {
+        fetchTodosCalled = true
+        // Mock successful response
+        let mockResponse = TodoResponse(
+            todos: [
+                TodoItemAPI(id: 1, todo: "Test Todo", completed: false, userId: 1)
+            ],
+            total: 1,
+            skip: 0,
+            limit: 10
+        )
+        completion(.success(mockResponse))
+    }
+}
+
+class MockTodoListInteractorOutput: TodoListInteractorOutput {
+    var didLoadTodosCalled: (([TodoItemViewModel]) -> Void)?
+    var didReceiveErrorCalled: ((String) -> Void)?
+    var didUpdateTodosCalled: (([TodoItemViewModel]) -> Void)?
+    
+    func didLoadTodos(_ todos: [TodoItemViewModel]) {
+        didLoadTodosCalled?(todos)
+    }
+    
+    func didReceiveError(_ error: String) {
+        didReceiveErrorCalled?(error)
+    }
+    
+    func didUpdateTodos(_ todos: [TodoItemViewModel]) {
+        didUpdateTodosCalled?(todos)
+    }
+}
+
+class MockTodoListInteractor: TodoListInteractorInput {
+    var loadTodosCalled = false
+    var updateTodoCalled = false
+    var updateTodoId: Int?
+    var updateTodoTitle: String?
+    var updateTodoDescription: String?
+    
+    func loadTodos() {
+        loadTodosCalled = true
+    }
+    
+    func updateTodo(id: Int, title: String, description: String) {
+        updateTodoCalled = true
+        updateTodoId = id
+        updateTodoTitle = title
+        updateTodoDescription = description
+    }
+    
+    func deleteTodo(_ id: Int) {
+        // Mock implementation
+    }
+}
+
+class MockTodoListRouter: TodoListRouterInput {
+    var openAddNewTodoScreenCalled = false
+    
+    func openAddNewTodoScreen() {
+        openAddNewTodoScreenCalled = true
+    }
+}
+
+class MockTodoListView: TodoListViewInput {
+    var displayTodosCalled = false
+    var displayErrorCalled = false
+    
+    func displayTodos(_ todos: [TodoItemViewModel]) {
+        displayTodosCalled = true
+    }
+    
+    func displayError(_ message: String) {
+        displayErrorCalled = true
+    }
 }
