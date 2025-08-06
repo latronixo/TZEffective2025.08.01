@@ -252,25 +252,33 @@ extension TodoListView: ContextMenuDelegate {
 // MARK: TodoListPresenterOutput
 extension TodoListView: TodoListPresenterOutput {
     func displayTodos(_ todos: [TodoItemViewModel]) {
-        self.todos = todos
-        tableView.reloadData()
-        updateTasksCount()
+        DispatchQueue.main.async { [weak self] in
+            self?.todos = todos
+            self?.tableView.reloadData()
+            self?.updateTasksCount()
+        }
     }
     
     private func updateTasksCount() {
-        let count = todos.count
-        let taskWord = count == 1 ? "задача" : (count >= 2 && count <= 4 ? "задачи" : "задач")
-        tasksCountLabel.text = "\(count) \(taskWord)"
+        DispatchQueue.main.async { [weak self] in
+            guard let count = self?.todos.count else { return }
+            let taskWord = count == 1 ? "задача" : (count >= 2 && count <= 4 ? "задачи" : "задач")
+            self?.tasksCountLabel.text = "\(count) \(taskWord)"
+        }
     }
     
     func displayError(_ message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        DispatchQueue.main.async { [weak self] in
+            let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self?.present(alert, animated: true)
+        }
     }
     
     func showLoading() {
-        loadingIndicator.startAnimating()
+        DispatchQueue.main.async { [weak self] in
+            self?.loadingIndicator.startAnimating()
+        }
     }
     
     func hideLoading() {
