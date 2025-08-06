@@ -104,35 +104,39 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
     }
     
     func updateTodo(id: Int, title: String, description: String) {
-        let context = container.viewContext
-        let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
-        request.predicate = NSPredicate(format: "id == %d", id)
-        
-        do {
-            let results = try context.fetch(request)
-            if let todoItem = results.first {
-                todoItem.setValue(title, forKey: "title")
-                todoItem.setValue(description, forKey: "describe")
-                try context.save()
+        backgroundQueue.async { [weak self] in
+            guard let context = self?.container.viewContext else { return }
+            let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+            request.predicate = NSPredicate(format: "id == %d", id)
+            
+            do {
+                let results = try context.fetch(request)
+                if let todoItem = results.first {
+                    todoItem.setValue(title, forKey: "title")
+                    todoItem.setValue(description, forKey: "describe")
+                    try context.save()
+                }
+            } catch {
+                print("Error updating todo: \(error)")
             }
-        } catch {
-            print("Error updating todo: \(error)")
         }
     }
     
     func deleteTodo(_ id: Int) {
-        let context = container.viewContext
-        let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
-        request.predicate = NSPredicate(format: "id == %d", id)
-        
-        do {
-            let results = try context.fetch(request)
-            if let todoItem = results.first {
-                context.delete(todoItem)
-                try context.save()
+        backgroundQueue.async { [weak self] in
+            guard let context = self?.container.viewContext else { return }
+            let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+            request.predicate = NSPredicate(format: "id == %d", id)
+            
+            do {
+                let results = try context.fetch(request)
+                if let todoItem = results.first {
+                    context.delete(todoItem)
+                    try context.save()
+                }
+            } catch {
+                print("Error deleting todo: \(error)")
             }
-        } catch {
-            print("Error deleting todo: \(error)")
         }
     }
     
