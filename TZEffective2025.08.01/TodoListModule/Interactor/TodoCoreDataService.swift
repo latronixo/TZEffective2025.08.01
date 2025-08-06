@@ -146,7 +146,19 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
             let todoItem = NSEntityDescription.insertNewObject(forEntityName: "TodoItem", into: context)
             
             //генерируем новый id
-            guard let maxId = self?.fetchMaxId() else { return }
+            var maxId = 0
+            
+            let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+            request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: false)]
+            request.fetchLimit = 1
+            
+            do {
+                let results = try context.fetch(request)
+                maxId = results.first?.value(forKey: "id") as? Int ?? 0
+            } catch {
+                print("Error fetching max id: \(error)")
+            }
+            
             let newId = maxId + 1
             
             todoItem.setValue(newId, forKey: "id")
@@ -163,20 +175,6 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
                 print("Error creating todo: \(error)")
                 completion(0)
             }
-        }
-    }
-    private func fetchMaxId() -> Int {
-        let context = container.viewContext
-        let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
-        request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: false)]
-        request.fetchLimit = 1
-        
-        do {
-            let results = try context.fetch(request)
-            return results.first?.value(forKey: "id") as? Int ?? 0
-        } catch {
-            print("Error fetching max id: \(error)")
-            return 0
         }
     }
 }
