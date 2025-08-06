@@ -37,10 +37,12 @@ final class TodoListInteractor: TodoListInteractorInput {
     }
     
     func loadTodos() {
-        if coreDataService.isFirstLaunch() {
-            loadTodosFromAPI()
-        } else {
-            loadTodosFromCoreData()
+        coreDataService.isFirstLaunch { [weak self] isFirstLaunch in
+            if isFirstLaunch{
+                self?.loadTodosFromAPI()
+            } else {
+                self?.loadTodosFromCoreData()
+            }
         }
     }
     

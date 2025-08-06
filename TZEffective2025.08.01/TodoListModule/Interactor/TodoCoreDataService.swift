@@ -11,7 +11,7 @@ import CoreData
 protocol TodoCoreDataServiceProtocol {
     func saveTodos(_ todos: [TodoItemAPI])
     func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void)
-    func isFirstLaunch() -> Bool
+    func isFirstLaunch(completion: @escaping (Bool) -> Void)
     func markAsFirstLaunch()
     func updateTodoCompletion(id: Int, isCompleted: Bool)
     func updateTodo(id: Int, title: String, description: String)
@@ -73,8 +73,8 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
         }
     }
     
-    func isFirstLaunch() -> Bool {
-        return !userDefaults.bool(forKey: firstLaunchKey)
+    func isFirstLaunch(completion: @escaping (Bool) -> Void) {
+        completion(!userDefaults.bool(forKey: firstLaunchKey))
     }
     
     func markAsFirstLaunch() {
