@@ -10,7 +10,6 @@ import Foundation
 protocol DetailTodoPresenterInput {
     var output: DetailTodoPresenterOutput { get set }
     func viewDidLoad()
-    func saveButtonTapped()
     func backButtonTapped()
 }
 
@@ -41,7 +40,7 @@ extension DetailTodoPresenter: DetailTodoViewOutput {
         interactor.loadTodo()
     }
     
-    func saveButtonTapped() {
+    func backButtonTapped() {
         guard let detailView = view as? DetailTodoView else { return }
         let editedData = detailView.getEditedData()
         
@@ -51,10 +50,6 @@ extension DetailTodoPresenter: DetailTodoViewOutput {
         }
         
         interactor.saveTodo(title: editedData.title, description: editedData.description)
-    }
-    
-    func backButtonTapped() {
-        output?.closeView()
     }
 }
 

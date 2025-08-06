@@ -13,7 +13,6 @@ protocol DetailTodoViewInput {
 
 protocol DetailTodoViewOutput {
     func viewDidLoad()
-    func saveButtonTapped()
     func backButtonTapped()
 }
 
@@ -41,18 +40,15 @@ final class DetailTodoView: UIViewController, DetailTodoViewInput {
     
     private func setupNavigationBar() {
         title = ""
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
+        let backButton = UIBarButtonItem(
             title: "Назад",
             style: .plain,
             target: self,
-            action: #selector(saveButtonTapped)
+            action: #selector(backButtonTapped)
         )
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(
-//            title: "Сохранить",
-//            style: .plain,
-//            target: self,
-//            action: #selector(saveButtonTapped)
-//        )
+        backButton.tintColor = UIColor(red: 0.9941777587, green: 0.8433876634, blue: 0.01378514804, alpha: 1.0)
+                
+        navigationItem.leftBarButtonItem = backButton
     }
     
     private func setupViews() {
@@ -117,38 +113,42 @@ final class DetailTodoView: UIViewController, DetailTodoViewInput {
     @objc private func backButtonTapped() {
         output?.backButtonTapped()
     }
-    
-    @objc private func saveButtonTapped() {
-        output?.saveButtonTapped()
-    }
-}
+ }
 
 extension DetailTodoView: DetailTodoPresenterOutput {
     func displayTodo(_ todo: TodoItemViewModel) {
-        configure(with: todo)
+        DispatchQueue.main.async { [weak self] in
+            self?.configure(with: todo)
+        }
     }
     
     func showError(_ message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        DispatchQueue.main.async { [weak self] in
+            let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self?.present(alert, animated: true)
+        }
     }
     
     func closeView() {
-        dismiss(animated: true)
+        DispatchQueue.main.async { [weak self] in
+            self?.dismiss(animated: true)
+        }
     }
     
     func updateTodoInList(id: Int, title: String, description: String, isNew: Bool) {
-        // Вызываем обновление через NotificationCenter
-        NotificationCenter.default.post(
-            name: NSNotification.Name("TodoUpdated"),
-            object: nil,
-            userInfo: [
-                "id": id,
-                "title": title,
-                "description": description,
-                "isNew": isNew
-            ]
-        )
+        DispatchQueue.main.async {
+            // Вызываем обновление через NotificationCenter
+            NotificationCenter.default.post(
+                name: NSNotification.Name("TodoUpdated"),
+                object: nil,
+                userInfo: [
+                    "id": id,
+                    "title": title,
+                    "description": description,
+                    "isNew": isNew
+                ]
+            )
+        }
     }
 }
