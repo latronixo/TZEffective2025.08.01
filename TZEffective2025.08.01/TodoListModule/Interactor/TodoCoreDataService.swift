@@ -78,7 +78,11 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
     }
     
     func markAsFirstLaunch() {
-        userDefaults.set(true, forKey: firstLaunchKey)
+        backgroundQueue.async { [weak self] in
+            guard let firstLaunchKey = self?.firstLaunchKey,
+                  let userDefaults = self?.userDefaults else { return }
+            userDefaults.set(true, forKey: firstLaunchKey)
+        }
     }
     
     func updateTodoCompletion(id: Int, isCompleted: Bool) {
