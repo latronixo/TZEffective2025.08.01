@@ -86,18 +86,20 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
     }
     
     func updateTodoCompletion(id: Int, isCompleted: Bool) {
-        let context = container.viewContext
-        let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
-        request.predicate = NSPredicate(format: "id == %d", id)
-        
-        do {
-            let results = try context.fetch(request)
-            if let todoItem = results.first {
-                todoItem.setValue(isCompleted, forKey: "completed")
-                try context.save()
+        backgroundQueue.async { [weak self] in
+            guard let context = self?.container.viewContext else { return }
+            let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+            request.predicate = NSPredicate(format: "id == %d", id)
+            
+            do {
+                let results = try context.fetch(request)
+                if let todoItem = results.first {
+                    todoItem.setValue(isCompleted, forKey: "completed")
+                    try context.save()
+                }
+            } catch {
+                print("Error updating todo completion: \(error)")
             }
-        } catch {
-            print("Error updating todo completion: \(error)")
         }
     }
     
