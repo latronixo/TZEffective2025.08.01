@@ -51,8 +51,9 @@ final class DetailTodoInteractor: DetailTodoInteractorInput {
             coreDataService.updateTodo(id: existingTodo.id, title: title, description: description)
             output?.didSaveTodo(id: existingTodo.id, title: title, description: description, isNew: false)    //для обновления на основном экране
         } else {
-            let newId = coreDataService.createTodo(title: title, description: description)
-            output?.didSaveTodo(id: newId, title: title, description: description, isNew: true)    //для обновления на основном экране
+            coreDataService.createTodo(title: title, description: description) { newId in
+                self.output?.didSaveTodo(id: newId, title: title, description: description, isNew: true)    //для обновления на основном экране
+            }
         }
     }
 }

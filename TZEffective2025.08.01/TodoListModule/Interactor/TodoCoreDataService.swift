@@ -16,7 +16,7 @@ protocol TodoCoreDataServiceProtocol {
     func updateTodoCompletion(id: Int, isCompleted: Bool)
     func updateTodo(id: Int, title: String, description: String)
     func deleteTodo(_ id: Int)
-    func createTodo(title: String, description: String) -> Int
+    func createTodo(title: String, description: String, completion: @escaping(Int) -> Void)
 }
 
 class TodoCoreDataService: TodoCoreDataServiceProtocol {
@@ -140,27 +140,29 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
         }
     }
     
-    func createTodo(title: String, description: String) -> Int {
-        let context = container.viewContext
-        let todoItem = NSEntityDescription.insertNewObject(forEntityName: "TodoItem", into: context)
-        
-        //генерируем новый id
-        let maxId = fetchMaxId()
-        let newId = maxId + 1
-        
-        todoItem.setValue(newId, forKey: "id")
-        todoItem.setValue(title, forKey: "title")
-        todoItem.setValue(description, forKey: "describe")
-        todoItem.setValue(false, forKey: "completed")
-        todoItem.setValue(1, forKey: "userId")
-        todoItem.setValue(Date(), forKey: "createdAt")
-
-        do {
-            try context.save()
-            return newId
-        } catch {
-            print("Error creating todo: \(error)")
-            return 0
+    func createTodo(title: String, description: String, completion: @escaping(Int) -> Void) {
+        backgroundQueue.async { [weak self] in
+            guard let context = self?.container.viewContext else { return }
+            let todoItem = NSEntityDescription.insertNewObject(forEntityName: "TodoItem", into: context)
+            
+            //генерируем новый id
+            guard let maxId = self?.fetchMaxId() else { return }
+            let newId = maxId + 1
+            
+            todoItem.setValue(newId, forKey: "id")
+            todoItem.setValue(title, forKey: "title")
+            todoItem.setValue(description, forKey: "describe")
+            todoItem.setValue(false, forKey: "completed")
+            todoItem.setValue(1, forKey: "userId")
+            todoItem.setValue(Date(), forKey: "createdAt")
+            
+            do {
+                try context.save()
+                completion(newId)
+            } catch {
+                print("Error creating todo: \(error)")
+                completion(0)
+            }
         }
     }
     private func fetchMaxId() -> Int {
