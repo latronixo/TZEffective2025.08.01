@@ -10,8 +10,8 @@ import UIKit
 class TodoListAssembly {
     static func assembleTodoListModule() -> UINavigationController {
         let view = TodoListView()
-        let networkService = TodoNetworkService()
-        let coreDataService = TodoCoreDataService()
+        let networkService = NetworkService()
+        let coreDataService = CoreDataService()
         let userDefaultsService = UserDefaultsService()
         
         let interactor = TodoListInteractor(

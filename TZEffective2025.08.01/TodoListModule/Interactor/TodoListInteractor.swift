@@ -27,12 +27,12 @@ protocol TodoListInteractorOutput: AnyObject {
 final class TodoListInteractor: TodoListInteractorInput {
     weak var output: TodoListInteractorOutput?
     
-    private let networkService: TodoNetworkServiceProtocol
-    private let coreDataService: TodoCoreDataServiceProtocol
+    private let networkService: NetworkServiceProtocol
+    private let coreDataService: CoreDataServiceProtocol
     private let userDefaultsService: UserDefaultsServiceProtocol
     private var allTodos: [TodoItemViewModel] = []
     
-    init(networkService: TodoNetworkServiceProtocol, coreDataService: TodoCoreDataServiceProtocol, userDefaultsService: UserDefaultsServiceProtocol) {
+    init(networkService: NetworkServiceProtocol, coreDataService: CoreDataServiceProtocol, userDefaultsService: UserDefaultsServiceProtocol) {
         self.networkService = networkService
         self.coreDataService = coreDataService
         self.userDefaultsService = userDefaultsService

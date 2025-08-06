@@ -16,9 +16,9 @@ protocol TodoListRouterInput {
 final class TodoListRouter: TodoListRouterInput {
     
     weak var rootViewController: UIViewController?
-    private var coreDataService: TodoCoreDataServiceProtocol
+    private var coreDataService: CoreDataServiceProtocol
     
-    init(coreDataService: TodoCoreDataServiceProtocol) {
+    init(coreDataService: CoreDataServiceProtocol) {
         self.coreDataService = coreDataService
     }
     

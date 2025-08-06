@@ -1,5 +1,5 @@
 //
-//  TodoCoreDataService.swift
+//  CoreDataService.swift
 //  TZEffective2025.08.01
 //
 //  Created by Валентин on 02.08.2025.
@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-protocol TodoCoreDataServiceProtocol {
+protocol CoreDataServiceProtocol {
     func saveTodos(_ todos: [TodoItemAPI])
     func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void)
     func updateTodoCompletion(id: Int, isCompleted: Bool)
@@ -17,7 +17,7 @@ protocol TodoCoreDataServiceProtocol {
     func createTodo(title: String, description: String, completion: @escaping(Int) -> Void)
 }
 
-class TodoCoreDataService: TodoCoreDataServiceProtocol {
+class CoreDataService: CoreDataServiceProtocol {
     private let container: NSPersistentContainer
     private let backgroundQueue = DispatchQueue(label: "com.todo.coredata.queue", qos: .background)
         

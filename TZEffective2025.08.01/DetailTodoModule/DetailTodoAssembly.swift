@@ -8,7 +8,7 @@
 import UIKit
 
 class DetailTodoAssembly {
-    static func assembleDetailTodoModule(todo: TodoItemViewModel?, coreDataService: TodoCoreDataServiceProtocol) -> UIViewController {
+    static func assembleDetailTodoModule(todo: TodoItemViewModel?, coreDataService: CoreDataServiceProtocol) -> UIViewController {
         let view = DetailTodoView()
         let interactor = DetailTodoInteractor(todo: todo, coreDataService: coreDataService)
         let router = DetailTodoRouter()

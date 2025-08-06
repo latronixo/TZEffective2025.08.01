@@ -23,9 +23,9 @@ final class DetailTodoInteractor: DetailTodoInteractorInput {
     var output: DetailTodoInteractorOutput?
     
     private let todo: TodoItemViewModel?
-    private let coreDataService: TodoCoreDataServiceProtocol
+    private let coreDataService: CoreDataServiceProtocol
     
-    init(todo: TodoItemViewModel?, coreDataService: TodoCoreDataServiceProtocol) {
+    init(todo: TodoItemViewModel?, coreDataService: CoreDataServiceProtocol) {
         self.todo = todo
         self.coreDataService = coreDataService
     }

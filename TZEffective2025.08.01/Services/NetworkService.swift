@@ -1,5 +1,5 @@
 //
-//  TodoNetworkService.swift
+//  NetworkService.swift
 //  TZEffective2025.08.01
 //
 //  Created by Валентин on 02.08.2025.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-protocol TodoNetworkServiceProtocol {
+protocol NetworkServiceProtocol {
     func fetchTodos(completion: @escaping (Result<TodoResponse, Error>) -> Void)
 }
 
-class TodoNetworkService: TodoNetworkServiceProtocol {
+class NetworkService: NetworkServiceProtocol {
     private let baseURL = "https://dummyjson.com/todos"
     
     func fetchTodos(completion: @escaping (Result<TodoResponse, any Error>) -> Void) {
