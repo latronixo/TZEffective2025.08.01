@@ -274,6 +274,8 @@ extension TodoListView: TodoListPresenterOutput {
     }
     
     func hideLoading() {
-        loadingIndicator.stopAnimating()
+        DispatchQueue.main.async { [weak self] in
+            self?.loadingIndicator.stopAnimating()
+        }
     }
 }
