@@ -11,8 +11,6 @@ import CoreData
 protocol TodoCoreDataServiceProtocol {
     func saveTodos(_ todos: [TodoItemAPI])
     func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void)
-    func isFirstLaunch(completion: @escaping (Bool) -> Void)
-    func markAsFirstLaunch()
     func updateTodoCompletion(id: Int, isCompleted: Bool)
     func updateTodo(id: Int, title: String, description: String)
     func deleteTodo(_ id: Int)
@@ -21,8 +19,6 @@ protocol TodoCoreDataServiceProtocol {
 
 class TodoCoreDataService: TodoCoreDataServiceProtocol {
     private let container: NSPersistentContainer
-    private let userDefaults = UserDefaults.standard
-    private let firstLaunchKey = "isFirstLaunch"
     private let backgroundQueue = DispatchQueue(label: "com.todo.coredata.queue", qos: .background)
         
     init() {
@@ -70,18 +66,6 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
                 print("Error fetching todos: \(error)")
                 completion([])
             }
-        }
-    }
-    
-    func isFirstLaunch(completion: @escaping (Bool) -> Void) {
-        completion(!userDefaults.bool(forKey: firstLaunchKey))
-    }
-    
-    func markAsFirstLaunch() {
-        backgroundQueue.async { [weak self] in
-            guard let firstLaunchKey = self?.firstLaunchKey,
-                  let userDefaults = self?.userDefaults else { return }
-            userDefaults.set(true, forKey: firstLaunchKey)
         }
     }
     

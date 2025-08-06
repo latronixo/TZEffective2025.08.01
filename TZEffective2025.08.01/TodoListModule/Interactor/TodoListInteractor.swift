@@ -29,20 +29,20 @@ final class TodoListInteractor: TodoListInteractorInput {
     
     private let networkService: TodoNetworkServiceProtocol
     private let coreDataService: TodoCoreDataServiceProtocol
+    private let userDefaultsService: UserDefaultsServiceProtocol
     private var allTodos: [TodoItemViewModel] = []
     
-    init(networkService: TodoNetworkServiceProtocol, coreDataService: TodoCoreDataServiceProtocol) {
+    init(networkService: TodoNetworkServiceProtocol, coreDataService: TodoCoreDataServiceProtocol, userDefaultsService: UserDefaultsServiceProtocol) {
         self.networkService = networkService
         self.coreDataService = coreDataService
+        self.userDefaultsService = userDefaultsService
     }
     
     func loadTodos() {
-        coreDataService.isFirstLaunch { [weak self] isFirstLaunch in
-            if isFirstLaunch{
-                self?.loadTodosFromAPI()
-            } else {
-                self?.loadTodosFromCoreData()
-            }
+        if userDefaultsService.isNotFirstLaunch() {
+            loadTodosFromCoreData()
+        } else {
+            loadTodosFromAPI()
         }
     }
     
@@ -53,7 +53,7 @@ final class TodoListInteractor: TodoListInteractorInput {
                 let todoViewModels = response.todos.map { TodoItemViewModel(from: $0) }
                 self?.allTodos = todoViewModels
                 self?.coreDataService.saveTodos(response.todos)
-                self?.coreDataService.markAsFirstLaunch()
+                self?.userDefaultsService.markAsNotFirstLaunch()
                 self?.output?.didLoadTodos(todoViewModels)
             case .failure(let error):
                 self?.output?.didReceiveError(error.localizedDescription)

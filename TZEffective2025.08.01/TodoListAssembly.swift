@@ -12,7 +12,13 @@ class TodoListAssembly {
         let view = TodoListView()
         let networkService = TodoNetworkService()
         let coreDataService = TodoCoreDataService()
-        let interactor = TodoListInteractor(networkService: networkService, coreDataService: coreDataService)
+        let userDefaultsService = UserDefaultsService()
+        
+        let interactor = TodoListInteractor(
+            networkService: networkService,
+            coreDataService: coreDataService,
+            userDefaultsService: userDefaultsService
+        )
         let router = TodoListRouter(coreDataService: coreDataService)
         
         let presenter = TodoListPresenter(interactor: interactor,
