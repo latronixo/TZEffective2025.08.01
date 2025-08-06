@@ -70,14 +70,17 @@ final class TodoListInteractor: TodoListInteractorInput {
     }
     
     func searchTodos(with query: String) {
-        if query.isEmpty {
-            output?.didUpdateTodos(allTodos)
-        } else {
-            let filteredTodos = allTodos.filter { todo in
-                todo.title.localizedCaseInsensitiveContains(query) || 
-                todo.describe.localizedCaseInsensitiveContains(query)
+        DispatchQueue(label: "com.todo.coredata.queue", qos: .background).async { [weak self] in
+            guard let allTodos = self?.allTodos else { return }
+            if query.isEmpty {
+                self?.output?.didUpdateTodos(allTodos)
+            } else {
+                let filteredTodos = allTodos.filter { todo in
+                    todo.title.localizedCaseInsensitiveContains(query) ||
+                    todo.describe.localizedCaseInsensitiveContains(query)
+                }
+                self?.output?.didUpdateTodos(filteredTodos)
             }
-            output?.didUpdateTodos(filteredTodos)
         }
     }
     
