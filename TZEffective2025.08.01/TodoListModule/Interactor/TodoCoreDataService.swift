@@ -11,7 +11,6 @@ import CoreData
 protocol TodoCoreDataServiceProtocol {
     func saveTodos(_ todos: [TodoItemAPI])
     func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void)
-    func deleteAllTodos()
     func isFirstLaunch() -> Bool
     func markAsFirstLaunch()
     func updateTodoCompletion(id: Int, isCompleted: Bool)
@@ -71,19 +70,6 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
                 print("Error fetching todos: \(error)")
                 completion([])
             }
-        }
-    }
-    
-    func deleteAllTodos() {
-        let context = container.viewContext
-        let request: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "TodoItem")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-        
-        do {
-            try context.execute(deleteRequest)
-            try context.save()
-        } catch {
-            print("Error deleting todos: \(error)")
         }
     }
     
