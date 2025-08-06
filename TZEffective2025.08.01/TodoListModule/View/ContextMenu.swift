@@ -257,7 +257,6 @@ class ContextMenu: UIViewController {
             // Позиционируем меню рядом с ячейкой
             let sourceFrame = sourceView.convert(sourceView.bounds, to: self.view)
             let screenBounds = UIScreen.main.bounds
-            print(sourceFrame.width)
             
             //Фиксированная позиция и ширина
             let xPosition: CGFloat = 25
