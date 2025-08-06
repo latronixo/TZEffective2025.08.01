@@ -10,7 +10,7 @@ import CoreData
 
 protocol TodoCoreDataServiceProtocol {
     func saveTodos(_ todos: [TodoItemAPI])
-    func fetchTodos() -> [NSManagedObject]
+    func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void)
     func deleteAllTodos()
     func isFirstLaunch() -> Bool
     func markAsFirstLaunch()
@@ -24,7 +24,8 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
     private let container: NSPersistentContainer
     private let userDefaults = UserDefaults.standard
     private let firstLaunchKey = "isFirstLaunch"
-    
+    private let backgroundQueue = DispatchQueue(label: "com.todo.coredata.queue", qos: .background)
+        
     init() {
         container = NSPersistentContainer(name: "TodoDataModel")
         container.loadPersistentStores { _, error in
@@ -35,36 +36,41 @@ class TodoCoreDataService: TodoCoreDataServiceProtocol {
     }
     
     func saveTodos(_ todos: [TodoItemAPI]) {
-        let context = container.viewContext
-        
-        for todo in todos {
-            let todoItem = NSEntityDescription.insertNewObject(forEntityName: "TodoItem", into: context)
-            todoItem.setValue(todo.id, forKey: "id")
-            todoItem.setValue(todo.todo, forKey: "title")
-            todoItem.setValue(todo.todo, forKey: "describe")
-            todoItem.setValue(todo.completed, forKey: "completed")
-            todoItem.setValue(todo.userId, forKey: "userId")
-            todoItem.setValue(Date(), forKey: "createdAt")
-        }
-        
-        do {
-            try context.save()
-        } catch {
-            print("Error saving todos: \(error)")
+        backgroundQueue.async { [weak self] in
+            guard let context = self?.container.viewContext else { return }
+            
+            for todo in todos {
+                let todoItem = NSEntityDescription.insertNewObject(forEntityName: "TodoItem", into: context)
+                todoItem.setValue(todo.id, forKey: "id")
+                todoItem.setValue(todo.todo, forKey: "title")
+                todoItem.setValue(todo.todo, forKey: "describe")
+                todoItem.setValue(todo.completed, forKey: "completed")
+                todoItem.setValue(todo.userId, forKey: "userId")
+                todoItem.setValue(Date(), forKey: "createdAt")
+            }
+            
+            do {
+                try context.save()
+            } catch {
+                print("Error saving todos: \(error)")
+            }
         }
     }
     
-    func fetchTodos() -> [NSManagedObject] {
-        let context = container.viewContext
-        let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
-        
-        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
-        
-        do {
-            return try context.fetch(request)
-        } catch {
-            print("Error fetching todos: \(error)")
-            return []
+    func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void) {
+        backgroundQueue.async { [weak self] in
+            guard let context = self?.container.viewContext else { return }
+            let request = NSFetchRequest<NSManagedObject>(entityName: "TodoItem")
+            
+            request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+            
+            do {
+                let result = try context.fetch(request)
+                completion(result)
+            } catch {
+                print("Error fetching todos: \(error)")
+                completion([])
+            }
         }
     }
     

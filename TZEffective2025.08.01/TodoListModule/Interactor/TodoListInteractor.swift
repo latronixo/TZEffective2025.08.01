@@ -46,26 +46,25 @@ final class TodoListInteractor: TodoListInteractorInput {
     
     private func loadTodosFromAPI() {
         networkService.fetchTodos { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let response):
-                    let todoViewModels = response.todos.map { TodoItemViewModel(from: $0) }
-                    self?.allTodos = todoViewModels
-                    self?.coreDataService.saveTodos(response.todos)
-                    self?.coreDataService.markAsFirstLaunch()
-                    self?.output?.didLoadTodos(todoViewModels)
-                case .failure(let error):
-                    self?.output?.didReceiveError(error.localizedDescription)
-                }
+            switch result {
+            case .success(let response):
+                let todoViewModels = response.todos.map { TodoItemViewModel(from: $0) }
+                self?.allTodos = todoViewModels
+                self?.coreDataService.saveTodos(response.todos)
+                self?.coreDataService.markAsFirstLaunch()
+                self?.output?.didLoadTodos(todoViewModels)
+            case .failure(let error):
+                self?.output?.didReceiveError(error.localizedDescription)
             }
         }
     }
     
     private func loadTodosFromCoreData() {
-        let coreDataItems = coreDataService.fetchTodos()
-        let todoViewModels = coreDataItems.map { TodoItemViewModel(from: $0) }
-        self.allTodos = todoViewModels
-        self.output?.didLoadTodos(todoViewModels)
+        coreDataService.fetchTodos { [weak self] coreDataItems in
+            let todoViewModels = coreDataItems.map { TodoItemViewModel(from: $0) }
+            self?.allTodos = todoViewModels
+            self?.output?.didLoadTodos(todoViewModels)
+        }
     }
     
     func searchTodos(with query: String) {
