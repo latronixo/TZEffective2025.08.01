@@ -21,24 +21,23 @@ class TodoNetworkService: TodoNetworkServiceProtocol {
         }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let data = data else {
-                    completion(.failure(NetworkError.noData))
-                    return
-                }
-                
-                do {
-                    let response = try JSONDecoder().decode(TodoResponse.self, from: data)
-                    completion(.success(response))
-                } catch {
-                    completion(.failure(NetworkError.decodingError))
-                }
+            if let error = error {
+                completion(.failure(error))
+                return
             }
+            
+            guard let data = data else {
+                completion(.failure(NetworkError.noData))
+                return
+            }
+            
+            do {
+                let response = try JSONDecoder().decode(TodoResponse.self, from: data)
+                completion(.success(response))
+            } catch {
+                completion(.failure(NetworkError.decodingError))
+            }
+            
         }.resume()
     }
 }
