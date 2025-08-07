@@ -53,11 +53,6 @@
 			path = TZEffective2025.08.01Tests;
 			sourceTree = "<group>";
 		};
-		CEFA4A812E3E181200FC15ED /* TZEffective2025.08.01UITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TZEffective2025.08.01UITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +85,6 @@
 			children = (
 				CEFA4A5D2E3E181000FC15ED /* TZEffective2025.08.01 */,
 				CEFA4A772E3E181200FC15ED /* TZEffective2025.08.01Tests */,
-				CEFA4A812E3E181200FC15ED /* TZEffective2025.08.01UITests */,
 				CEFA4A5C2E3E181000FC15ED /* Products */,
 			);
 			sourceTree = "<group>";
@@ -165,9 +159,6 @@
 			);
 			dependencies = (
 				CEFA4A802E3E181200FC15ED /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				CEFA4A812E3E181200FC15ED /* TZEffective2025.08.01UITests */,
 			);
 			name = TZEffective2025.08.01UITests;
 			packageProductDependencies = (

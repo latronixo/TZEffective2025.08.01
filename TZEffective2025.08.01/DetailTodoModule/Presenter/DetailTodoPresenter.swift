@@ -8,7 +8,6 @@
 import Foundation
 
 protocol DetailTodoPresenterInput {
-    var output: DetailTodoPresenterOutput { get set }
     func viewDidLoad()
     func backButtonTapped()
 }

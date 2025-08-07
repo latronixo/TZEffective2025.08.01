@@ -8,7 +8,6 @@
 import Foundation
 
 protocol DetailTodoInteractorInput {
-    var output: DetailTodoInteractorOutput? { get set }
     func loadTodo()
     func saveTodo(title: String, description: String)
 }
