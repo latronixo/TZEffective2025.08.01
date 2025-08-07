@@ -179,6 +179,7 @@ final class TodoListInteractorTests: XCTestCase {
     var interactor: TodoListInteractor!
     var mockCoreDataService: MockCoreDataService!
     var mockNetworkService: MockNetworkService!
+    var mockUserDefaultsService: MockUserDefaultsService!
     var mockOutput: MockTodoListInteractorOutput!
     
     override func setUpWithError() throws {
@@ -186,11 +187,14 @@ final class TodoListInteractorTests: XCTestCase {
         
         mockCoreDataService = MockCoreDataService()
         mockNetworkService = MockNetworkService()
+        mockUserDefaultsService = MockUserDefaultsService()
+        
         mockOutput = MockTodoListInteractorOutput()
         
         interactor = TodoListInteractor(
+            networkService: mockNetworkService,
             coreDataService: mockCoreDataService,
-            networkService: mockNetworkService
+            userDefaultsService: mockUserDefaultsService
         )
         interactor.output = mockOutput
     }
@@ -199,6 +203,7 @@ final class TodoListInteractorTests: XCTestCase {
         interactor = nil
         mockCoreDataService = nil
         mockNetworkService = nil
+        mockUserDefaultsService = nil
         mockOutput = nil
         try super.tearDownWithError()
     }
@@ -245,6 +250,19 @@ final class TodoListInteractorTests: XCTestCase {
         
         // Then
         wait(for: [expectation], timeout: 5.0)
+    }
+    
+    func testLoadTodosOnFirstLaunchShouldLoadFromAPI() {
+        // GIVEN: Устанавливаем, что это первый запуск
+        mockUserDefaultsService.isNotFirstLaunchResult = false
+        
+        // WHEN: Загружаем задачи
+        interactor.loadTodos()
+        
+        // THEN: Проверяем, что были вызваны правильные методы
+        XCTAssertTrue(mockUserDefaultsService.isNotFirstLaunchCalled)
+        XCTAssertTrue(mockNetworkService.fetchTodosCalled) //Проверяем, что interactor пошел в сеть
+        XCTAssertFalse(mockCoreDataService.fetchTodosCalled)    //убеждаемся, что он НЕ пошел в CoreData
     }
 }
 
@@ -316,12 +334,14 @@ class MockCoreDataService: CoreDataServiceProtocol {
     var createTodoCalled = false
     var updateTodoCalled = false
     var deleteTodoCalled = false
+    var fetchTodosCalled = false
     
     func saveTodos(_ todos: [TodoItemAPI]) {
         // Mock implementation
     }
     
     func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void) {
+        fetchTodosCalled = true
         // Mock implementation - возвращаем пустой массив
         DispatchQueue.main.async {
             completion([])
@@ -366,10 +386,29 @@ class MockNetworkService: NetworkServiceProtocol {
     }
 }
 
+class MockUserDefaultsService: UserDefaultsServiceProtocol {
+    // Свойство для контроля результата. true = это НЕ первый запуск. false = это ПЕРВЫЙ запуск.
+    var isNotFirstLaunchResult: Bool = false
+    
+    // Флаги для проверки, были ли вызваны методы
+    var isNotFirstLaunchCalled = false
+    var markAsNotFirstLaunchCalled = false
+    
+    func isNotFirstLaunch() -> Bool {
+        isNotFirstLaunchCalled = true
+        return isNotFirstLaunchResult
+    }
+    
+    func markAsNotFirstLaunch() {
+        isNotFirstLaunchResult = true
+    }
+}
+
 class MockTodoListInteractorOutput: TodoListInteractorOutput {
     var didLoadTodosCalled: (([TodoItemViewModel]) -> Void)?
     var didReceiveErrorCalled: ((String) -> Void)?
     var didUpdateTodosCalled: (([TodoItemViewModel]) -> Void)?
+    var didDeleteTodocalled: (([TodoItemViewModel]) -> Void)?
     
     func didLoadTodos(_ todos: [TodoItemViewModel]) {
         didLoadTodosCalled?(todos)
@@ -382,9 +421,15 @@ class MockTodoListInteractorOutput: TodoListInteractorOutput {
     func didUpdateTodos(_ todos: [TodoItemViewModel]) {
         didUpdateTodosCalled?(todos)
     }
+
+    func didDeleteTodo(_ todos: [TodoItemViewModel]) {
+        didDeleteTodocalled?(todos)
+    }
 }
 
 class MockTodoListInteractor: TodoListInteractorInput {
+    var output: (any TZEffective2025_08_01.TodoListInteractorOutput)?
+    
     var loadTodosCalled = false
     var updateTodoCalled = false
     var updateTodoId: Int?
@@ -403,6 +448,14 @@ class MockTodoListInteractor: TodoListInteractorInput {
     }
     
     func deleteTodo(_ id: Int) {
+        // Mock implementation
+    }
+    
+    func searchTodos(with query: String) {
+        // Mock implementation
+    }
+    
+    func toggleTodoCompletion(id: Int) {
         // Mock implementation
     }
 }
