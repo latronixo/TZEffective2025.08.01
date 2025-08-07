@@ -13,11 +13,7 @@ protocol DetailTodoPresenterInput {
 }
 
 protocol DetailTodoPresenterOutput: AnyObject {
-    func displayTodo(_ todo: TodoItemViewModel)
-    func showError(_ message: String)
-    func closeView()
-    func updateTodoInList(id: Int, title: String, description: String, isNew: Bool)
-}
+ }
 
 final class DetailTodoPresenter {
     weak var output: DetailTodoPresenterOutput?
@@ -27,10 +23,13 @@ final class DetailTodoPresenter {
     private let router: DetailTodoRouterInput
     private var currentTodo: TodoItemAPI?
     
-    init(interactor: DetailTodoInteractorInput, view: DetailTodoViewInput, router: DetailTodoRouterInput) {
+    private weak var listener: TodoUpdateListener?
+    
+    init(interactor: DetailTodoInteractorInput, view: DetailTodoViewInput, router: DetailTodoRouterInput, todoListener: TodoUpdateListener?) {
         self.interactor = interactor
         self.view = view
         self.router = router
+        self.listener = todoListener
     }
 }
 
@@ -44,7 +43,7 @@ extension DetailTodoPresenter: DetailTodoViewOutput {
         let editedData = detailView.getEditedData()
         
         if editedData.title.isEmpty {
-            output?.showError("Название задачи не может быть пустым")
+            view.showError("Название задачи не может быть пустым")
             return
         }
         
@@ -54,17 +53,16 @@ extension DetailTodoPresenter: DetailTodoViewOutput {
 
 extension DetailTodoPresenter: DetailTodoInteractorOutput {
     func didLoadTodo(_ todo: TodoItemViewModel) {
-        output?.displayTodo(todo)
+        view.displayTodo(todo)
     }
     
     func didSaveTodo(id: Int, title: String, description: String, isNew: Bool) {
         //пробрасываем для обновления задачи в основном списке
-        output?.updateTodoInList(id: id, title: title, description: description, isNew: isNew)
-        
-        output?.closeView()
+        listener?.update(model: TodoUpdateModel(id: id, title: title, description: description, isNew: isNew))
+        view.closeView()
     }
     
     func didReceiveError(_ error: String) {
-        output?.showError(error)
+        view.showError(error)
     }
 }

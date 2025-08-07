@@ -7,8 +7,21 @@
 
 import UIKit
 
+protocol TodoUpdateListener: AnyObject {
+    func update(model: TodoUpdateModel)
+}
+
+struct TodoUpdateModel {
+    let id: Int
+    let title: String
+    let description: String
+    let isNew: Bool
+}
+
 protocol DetailTodoViewInput {
-    var output: DetailTodoViewOutput? { get set }
+    func displayTodo(_ todo: TodoItemViewModel)
+    func showError(_ message: String)
+    func closeView()
 }
 
 protocol DetailTodoViewOutput {
@@ -16,15 +29,15 @@ protocol DetailTodoViewOutput {
     func backButtonTapped()
 }
 
-final class DetailTodoView: UIViewController, DetailTodoViewInput {
+final class DetailTodoView: UIViewController {
     var output: DetailTodoViewOutput?
     
     private let titleTextField = UITextField()
     private let dateLabel = UILabel()
     private let descriptionTextView = UITextView()
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    init() {
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -115,7 +128,7 @@ final class DetailTodoView: UIViewController, DetailTodoViewInput {
     }
  }
 
-extension DetailTodoView: DetailTodoPresenterOutput {
+extension DetailTodoView: DetailTodoViewInput {
     func displayTodo(_ todo: TodoItemViewModel) {
         DispatchQueue.main.async { [weak self] in
             self?.configure(with: todo)
@@ -135,20 +148,5 @@ extension DetailTodoView: DetailTodoPresenterOutput {
             self?.dismiss(animated: true)
         }
     }
-    
-    func updateTodoInList(id: Int, title: String, description: String, isNew: Bool) {
-        DispatchQueue.main.async {
-            // Вызываем обновление через NotificationCenter
-            NotificationCenter.default.post(
-                name: NSNotification.Name("TodoUpdated"),
-                object: nil,
-                userInfo: [
-                    "id": id,
-                    "title": title,
-                    "description": description,
-                    "isNew": isNew
-                ]
-            )
-        }
-    }
 }
+

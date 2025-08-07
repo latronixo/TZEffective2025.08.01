@@ -8,9 +8,9 @@
 import UIKit
 
 protocol TodoListRouterInput {
-    func openDetailScreen(with todo: TodoItemViewModel)
+    func openDetailScreen(with todo: TodoItemViewModel, todoListener: TodoUpdateListener?) 
     func shareTodo(with todo: TodoItemViewModel)
-    func openAddNewTodoScreen()
+    func openAddNewTodoScreen(todoListener: TodoUpdateListener?)
 }
 
 final class TodoListRouter: TodoListRouterInput {
@@ -22,8 +22,8 @@ final class TodoListRouter: TodoListRouterInput {
         self.coreDataService = coreDataService
     }
     
-    func openDetailScreen(with todo: TodoItemViewModel) {
-        let detailModule = DetailTodoAssembly.assembleDetailTodoModule(todo: todo, coreDataService: coreDataService)
+    func openDetailScreen(with todo: TodoItemViewModel, todoListener: TodoUpdateListener?) {
+        let detailModule = DetailTodoAssembly.assembleDetailTodoModule(todo: todo, coreDataService: coreDataService, todoListener: todoListener)
         rootViewController?.present(detailModule, animated: true)
     }
     
@@ -33,8 +33,8 @@ final class TodoListRouter: TodoListRouterInput {
         rootViewController?.present(activityViewController, animated: true)
     }
     
-    func openAddNewTodoScreen() {
-        let detailModule = DetailTodoAssembly.assembleDetailTodoModule(todo: nil, coreDataService: coreDataService)
+    func openAddNewTodoScreen(todoListener: TodoUpdateListener?) {
+        let detailModule = DetailTodoAssembly.assembleDetailTodoModule(todo: nil, coreDataService: coreDataService, todoListener: todoListener)
         rootViewController?.present(detailModule, animated: true)
     }
 }

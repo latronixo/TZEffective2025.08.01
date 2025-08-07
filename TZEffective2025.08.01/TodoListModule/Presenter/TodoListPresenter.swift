@@ -56,6 +56,16 @@ final class TodoListPresenter {
     }
 }
 
+extension TodoListPresenter: TodoUpdateListener {
+    func update(model: TodoUpdateModel) {
+        if model.isNew {
+            interactor.loadTodos()
+        } else {
+            updateTodoAfterEdit(id: model.id, title: model.title, description: model.description)
+        }
+    }
+}
+
 extension TodoListPresenter: TodoListViewOutput {
     func viewDidLoad() {
         output?.showLoading()
@@ -71,7 +81,7 @@ extension TodoListPresenter: TodoListViewOutput {
     }
     
     func editTodo(_ todo: TodoItemViewModel) {
-        router.openDetailScreen(with: todo)
+        router.openDetailScreen(with: todo, todoListener: self)
         
     }
     
@@ -88,7 +98,7 @@ extension TodoListPresenter: TodoListViewOutput {
     }
     
     func addNewTodo() {
-        router.openAddNewTodoScreen()
+        router.openAddNewTodoScreen(todoListener: self)
     }
 }
 
