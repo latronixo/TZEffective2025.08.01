@@ -50,7 +50,7 @@ final class DetailTodoInteractorTests: XCTestCase {
         interactor.loadTodo()
         
         // Then
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 0.5)
     }
     
     func testLoadTodoForExistingTask() {
@@ -83,7 +83,7 @@ final class DetailTodoInteractorTests: XCTestCase {
         interactor.loadTodo()
         
         // Then
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 0.5)
     }
     
     func testSaveTodoForNewTask() {
@@ -104,7 +104,7 @@ final class DetailTodoInteractorTests: XCTestCase {
         interactor.saveTodo(title: title, description: description)
         
         // Then
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 0.5)
     }
     
     func testSaveTodoForExistingTask() {
@@ -161,7 +161,8 @@ final class DetailTodoPresenterTests: XCTestCase {
         presenter = DetailTodoPresenter(
             interactor: mockInteractor,
             view: mockView,
-            router: mockRouter
+            router: mockRouter,
+            todoListener: nil
         )
     }
     
@@ -181,13 +182,13 @@ final class DetailTodoPresenterTests: XCTestCase {
         XCTAssertTrue(mockInteractor.loadTodoCalled)
     }
     
-    func testSaveButtonTapped() {
+    func testBackButtonTapped() {
         // Given
         let title = "Test Title"
         let description = "Test Description"
         
         // When
-        presenter.saveButtonTapped(title: title, description: description)
+        presenter.backButtonTapped()
         
         // Then
         XCTAssertTrue(mockInteractor.saveTodoCalled)
@@ -295,5 +296,8 @@ class MockDetailTodoView: DetailTodoViewInput {
 }
 
 class MockDetailTodoRouter: DetailTodoRouterInput {
-    // Mock implementation
-} 
+    var closedViewTapped: Bool = false
+    func closeView() {
+        closedViewTapped = true
+    }
+}

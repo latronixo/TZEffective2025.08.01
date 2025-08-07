@@ -461,6 +461,18 @@ class MockTodoListInteractor: TodoListInteractorInput {
 }
 
 class MockTodoListRouter: TodoListRouterInput {
+    func openDetailScreen(with todo: TZEffective2025_08_01.TodoItemViewModel, todoListener: (any TZEffective2025_08_01.TodoUpdateListener)?) {
+        
+    }
+    
+    func shareTodo(with todo: TZEffective2025_08_01.TodoItemViewModel) {
+        
+    }
+    
+    func openAddNewTodoScreen(todoListener: (any TZEffective2025_08_01.TodoUpdateListener)?) {
+        
+    }
+    
     var openAddNewTodoScreenCalled = false
     
     func openAddNewTodoScreen() {
@@ -469,6 +481,8 @@ class MockTodoListRouter: TodoListRouterInput {
 }
 
 class MockTodoListView: TodoListViewInput {
+    var output: (any TZEffective2025_08_01.TodoListViewOutput)?
+    
     var displayTodosCalled = false
     var displayErrorCalled = false
     
