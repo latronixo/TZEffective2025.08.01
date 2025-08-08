@@ -24,7 +24,7 @@ protocol TodoListViewOutput: AnyObject {
     func addNewTodo()
 }
 
-final class TodoListView: UIViewController, TodoListViewInput {
+final class TodoListView: UIViewController {
     var output: TodoListViewOutput?
     
     private let searchBar = UISearchBar()
@@ -253,7 +253,7 @@ extension TodoListView: ContextMenuDelegate {
 }
 
 // MARK: TodoListPresenterOutput
-extension TodoListView: TodoListPresenterOutput {
+extension TodoListView: TodoListViewInput {
     func displayTodos(_ todos: [TodoItemViewModel]) {
         DispatchQueue.main.async { [weak self] in
             self?.todos = todos

@@ -27,7 +27,6 @@ class TodoListAssembly {
         
         view.output = presenter
         interactor.output = presenter
-        presenter.output = view
         router.rootViewController = view
         
         let navigationController = UINavigationController(rootViewController: view)

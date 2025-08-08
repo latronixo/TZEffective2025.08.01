@@ -14,12 +14,7 @@ protocol TodoListPresenterInput {
     func updateTodoAfterEdit(id: Int, title: String, description: String)
 }
 
-protocol TodoListPresenterOutput: AnyObject {
-}
-
 final class TodoListPresenter {
-    weak var output: TodoListPresenterOutput?
-    
     private let interactor: TodoListInteractorInput
     private let router: TodoListRouterInput
     private let view: TodoListViewInput
