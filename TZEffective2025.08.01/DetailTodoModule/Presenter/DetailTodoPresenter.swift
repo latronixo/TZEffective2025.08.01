@@ -17,7 +17,6 @@ final class DetailTodoPresenter {
     private let interactor: DetailTodoInteractorInput
     private let view: DetailTodoViewInput
     private let router: DetailTodoRouterInput
-    private var currentTodo: TodoItemAPI?
     
     private weak var listener: TodoUpdateListener?
     
@@ -39,8 +38,13 @@ extension DetailTodoPresenter: DetailTodoViewOutput {
         let editedData = detailView.getEditedData()
         
         if editedData.title.isEmpty {
-            view.showError("Название задачи не может быть пустым")
-            return
+            if editedData.description.isEmpty {
+                view.closeView()
+                return
+            } else {
+                view.showError("Название задачи не может быть пустым")
+                return
+            }
         }
         
         interactor.saveTodo(title: editedData.title, description: editedData.description)
