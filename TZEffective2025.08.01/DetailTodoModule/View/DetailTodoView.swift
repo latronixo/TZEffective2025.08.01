@@ -26,7 +26,7 @@ protocol DetailTodoViewInput {
 
 protocol DetailTodoViewOutput {
     func viewDidLoad()
-    func backButtonTapped()
+    func backButtonTapped(title: String, description: String)
 }
 
 final class DetailTodoView: UIViewController {
@@ -124,7 +124,7 @@ final class DetailTodoView: UIViewController {
     }
     
     @objc private func backButtonTapped() {
-        output?.backButtonTapped()
+        output?.backButtonTapped(title: titleTextField.text ?? "", description: descriptionTextView.text ?? "")
     }
  }
 

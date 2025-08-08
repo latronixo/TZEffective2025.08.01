@@ -33,21 +33,18 @@ extension DetailTodoPresenter: DetailTodoViewOutput {
         interactor.loadTodo()
     }
     
-    func backButtonTapped() {
-        guard let detailView = view as? DetailTodoView else { return }
-        let editedData = detailView.getEditedData()
-        
-        if editedData.title.isEmpty {
-            if editedData.description.isEmpty {
-                view.closeView()
-                return
-            } else {
-                view.showError("Название задачи не может быть пустым")
-                return
-            }
+    func backButtonTapped(title: String, description: String) {
+        if title.isEmpty && !description.isEmpty {
+            view.showError("Название задачи не может быть пустым")
+            return
         }
         
-        interactor.saveTodo(title: editedData.title, description: editedData.description)
+        if title.isEmpty && description.isEmpty {
+            view.closeView()
+            return
+        }
+    
+        interactor.saveTodo(title: title, description: description)
     }
 }
 
