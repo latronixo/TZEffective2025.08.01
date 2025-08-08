@@ -140,7 +140,7 @@ final class DetailTodoInteractorTests: XCTestCase {
         interactor.saveTodo(title: newTitle, description: newDescription)
         
         // Then
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 0.5)
     }
 }
 
@@ -232,7 +232,7 @@ final class DetailTodoPresenterTests: XCTestCase {
         presenter.didSaveTodo(id: 1, title: "Test Title", description: "Test Description", isNew: false)
         
         // Then
-        wait(for: [expectation], timeout: 5.0)
+        wait(for: [expectation], timeout: 0.5)
     }
 }
 

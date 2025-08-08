@@ -1,6 +1,5 @@
 //
-//  TZEffective2025_08_01Tests.swift
-//  TZEffective2025_08_01Tests
+//  TodoListTests.swift
 //
 //  Created by Валентин on 02.08.2025.
 //
@@ -216,6 +215,7 @@ final class TodoListInteractorTests: XCTestCase {
             TodoItemViewModel(id: 2, title: "Test 2", describe: "Desc 2", isCompleted: true, createdAt: Date(), userId: 1)
         ]
         mockCoreDataService.mockTodos = mockTodos
+        mockUserDefaultsService.isNotFirstLaunchResult = true
         
         mockOutput.didLoadTodosCalled = { todos in
             XCTAssertEqual(todos.count, 2)
@@ -342,9 +342,22 @@ class MockCoreDataService: CoreDataServiceProtocol {
     
     func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void) {
         fetchTodosCalled = true
-        // Mock implementation - возвращаем пустой массив
+        
+        let managedObjects = mockTodos.map { viewModel -> NSManagedObject in
+            let entity = NSEntityDescription()
+            entity.name = "TodoItem"
+            let managedObject = NSManagedObject(entity: entity, insertInto: nil)
+            managedObject.setValue(viewModel.id, forKey: "id")
+            managedObject.setValue(viewModel.title, forKey: "title")
+            managedObject.setValue(viewModel.describe, forKey: "describe")
+            managedObject.setValue(viewModel.isCompleted, forKey: "isCompleted")
+            managedObject.setValue(viewModel.createdAt, forKey: "createdAt")
+            managedObject.setValue(viewModel.userId, forKey: "userId")
+            return managedObject
+        }
+        
         DispatchQueue.main.async {
-            completion([])
+            completion(managedObjects)
         }
     }
     
@@ -481,10 +494,10 @@ class MockTodoListRouter: TodoListRouterInput {
 }
 
 class MockTodoListView: TodoListViewInput {
-    var output: (any TZEffective2025_08_01.TodoListViewOutput)?
-    
     var displayTodosCalled = false
     var displayErrorCalled = false
+    var showLoadingCalled = false
+    var hideLoadingCalled = false
     
     func displayTodos(_ todos: [TodoItemViewModel]) {
         displayTodosCalled = true
@@ -493,4 +506,13 @@ class MockTodoListView: TodoListViewInput {
     func displayError(_ message: String) {
         displayErrorCalled = true
     }
+    
+    func showLoading() {
+        showLoadingCalled = true
+    }
+    
+    func hideLoading() {
+        hideLoadingCalled = true
+    }
+
 }
