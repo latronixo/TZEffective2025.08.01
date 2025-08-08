@@ -12,6 +12,26 @@ import CoreData
 // MARK: - TodoItemViewModel Tests
 final class TodoItemViewModelTests: XCTestCase {
     
+    var testContainer: NSPersistentContainer!
+    
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        testContainer = NSPersistentContainer(name: "TodoDataModel")
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        testContainer.persistentStoreDescriptions = [description]
+        testContainer.loadPersistentStores { _, error in
+            if let error = error {
+                XCTFail("Failed to load in-memory store: \(error)")
+            }
+        }
+    }
+    
+    override func tearDownWithError() throws {
+        testContainer = nil
+        try super.tearDownWithError()
+    }
+    
     func testInitFromAPIItem() {
         // Given
         let apiItem = TodoItemAPI(id: 1, todo: "Test Todo", completed: true, userId: 1)
@@ -30,7 +50,9 @@ final class TodoItemViewModelTests: XCTestCase {
     
     func testInitFromCoreDataItem() {
         // Given
-        let managedObject = NSManagedObject()
+        let entity = NSEntityDescription.entity(forEntityName: "TodoItem", in: testContainer.viewContext)!
+        
+        let managedObject = NSManagedObject(entity: entity, insertInto: testContainer.viewContext)
         managedObject.setValue(2, forKey: "id")
         managedObject.setValue("Core Data Todo", forKey: "title")
         managedObject.setValue("Core Data Description", forKey: "describe")
@@ -734,6 +756,19 @@ class MockCoreDataService: CoreDataServiceProtocol {
     var updateTodoCompletionCalled = false
     var saveTodosCalled = false
     
+    private lazy var testContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "TodoDataModel")
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        container.persistentStoreDescriptions = [description]
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                fatalError("Failed to load in-memory store: \(error)")
+            }
+        }
+        return container
+    }()
+    
     func saveTodos(_ todos: [TodoItemAPI]) {
         saveTodosCalled = true
     }
@@ -741,9 +776,10 @@ class MockCoreDataService: CoreDataServiceProtocol {
     func fetchTodos(completion: @escaping ([NSManagedObject]) -> Void) {
         fetchTodosCalled = true
         
+        let context = testContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "TodoItem", in:  context)!
+        
         let managedObjects = mockTodos.map { viewModel -> NSManagedObject in
-            let entity = NSEntityDescription()
-            entity.name = "TodoItem"
             let managedObject = NSManagedObject(entity: entity, insertInto: nil)
             managedObject.setValue(viewModel.id, forKey: "id")
             managedObject.setValue(viewModel.title, forKey: "title")
@@ -967,13 +1003,11 @@ class MockDetailTodoInteractor: DetailTodoInteractorInput {
     }
 }
 
-
-
 class MockDetailTodoRouter: DetailTodoRouterInput {
-    var closeCalled = false
+    var closeViewCalled = false
     
-    func close() {
-        closeCalled = true
+    func closeView() {
+        closeViewCalled = true
     }
 }
 
@@ -991,7 +1025,6 @@ class MockDetailTodoView: DetailTodoViewInput {
     var displayTodoCalled = false
     var showErrorCalled = false
     var closeViewCalled = false
-    var updateTodoInListCalled = false
     var editedData: (title: String, description: String) = ("", "")
     
     func displayTodo(_ todo: TodoItemViewModel) {
@@ -1006,45 +1039,7 @@ class MockDetailTodoView: DetailTodoViewInput {
         closeViewCalled = true
     }
     
-    func updateTodoInList(id: Int, title: String, description: String, isNew: Bool) {
-        updateTodoInListCalled = true
-    }
-    
     func getEditedData() -> (title: String, description: String) {
         return editedData
     }
-}
-
-// MARK: - Additional Protocols and Models
-protocol TodoUpdateListener: AnyObject {
-    func update(model: TodoUpdateModel)
-}
-
-struct TodoUpdateModel {
-    let id: Int
-    let title: String
-    let description: String
-    let isNew: Bool
-}
-
-protocol DetailTodoViewInput {
-    func displayTodo(_ todo: TodoItemViewModel)
-    func showError(_ message: String)
-    func closeView()
-    func updateTodoInList(id: Int, title: String, description: String, isNew: Bool)
-}
-
-protocol DetailTodoViewOutput {
-    func viewDidLoad()
-    func backButtonTapped()
-    func saveButtonTapped(title: String, description: String)
-}
-
-protocol DetailTodoRouterInput {
-    func close()
-}
-
-protocol DetailTodoPresenterInput {
-    func viewDidLoad()
-    func backButtonTapped()
 } 
