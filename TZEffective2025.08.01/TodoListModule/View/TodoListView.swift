@@ -8,6 +8,10 @@
 import UIKit
 
 protocol TodoListViewInput {
+    func displayTodos(_ todos: [TodoItemViewModel])
+    func displayError(_ message: String)
+    func showLoading()
+    func hideLoading()
 }
 
 protocol TodoListViewOutput: AnyObject {

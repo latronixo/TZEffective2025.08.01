@@ -15,10 +15,6 @@ protocol TodoListPresenterInput {
 }
 
 protocol TodoListPresenterOutput: AnyObject {
-    func displayTodos(_ todos: [TodoItemViewModel])
-    func displayError(_ message: String)
-    func showLoading()
-    func hideLoading()
 }
 
 final class TodoListPresenter {
@@ -67,7 +63,7 @@ extension TodoListPresenter: TodoUpdateListener {
 
 extension TodoListPresenter: TodoListViewOutput {
     func viewDidLoad() {
-        output?.showLoading()
+        view.showLoading()
         interactor.loadTodos()
     }
     
@@ -103,20 +99,20 @@ extension TodoListPresenter: TodoListViewOutput {
 
 extension TodoListPresenter: TodoListInteractorOutput {
     func didLoadTodos(_ todos: [TodoItemViewModel]) {
-        output?.hideLoading()
-        output?.displayTodos(todos)
+        view.hideLoading()
+        view.displayTodos(todos)
     }
     
     func didReceiveError(_ error: String) {
-        output?.hideLoading()
-        output?.displayError(error)
+        view.hideLoading()
+        view.displayError(error)
     }
     
     func didUpdateTodos(_ todos: [TodoItemViewModel]) {
-        output?.displayTodos(todos)
+        view.displayTodos(todos)
     }
     
     func didDeleteTodo(_ todos: [TodoItemViewModel]) {
-        output?.displayTodos(todos)
+        view.displayTodos(todos)
     }
 }
