@@ -12,11 +12,7 @@ protocol DetailTodoPresenterInput {
     func backButtonTapped()
 }
 
-protocol DetailTodoPresenterOutput: AnyObject {
- }
-
 final class DetailTodoPresenter {
-    weak var output: DetailTodoPresenterOutput?
     
     private let interactor: DetailTodoInteractorInput
     private let view: DetailTodoViewInput
