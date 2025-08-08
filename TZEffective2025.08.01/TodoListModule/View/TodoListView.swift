@@ -262,7 +262,19 @@ extension TodoListView: TodoListPresenterOutput {
     private func updateTasksCount() {
         DispatchQueue.main.async { [weak self] in
             guard let count = self?.todos.count else { return }
-            let taskWord = count == 1 ? "задача" : (count >= 2 && count <= 4 ? "задачи" : "задач")
+            let taskWord: String
+            let lastDigit = count % 10
+            let lastTwoDigits = count % 100
+            
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+                taskWord = "задач"
+            } else if lastDigit == 1 {
+                taskWord = "задача"
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                taskWord = "задачи"
+            } else {
+                taskWord = "задач"
+            }
             self?.tasksCountLabel.text = "\(count) \(taskWord)"
         }
     }
