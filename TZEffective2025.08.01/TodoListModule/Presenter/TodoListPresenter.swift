@@ -8,7 +8,6 @@
 import Foundation
 
 protocol TodoListPresenterInput {
-    var output: TodoListPresenterOutput? { get set }
     func viewDidLoad()
     func searchTextChanged(_ text: String)
     func todoToggled(id: Int)

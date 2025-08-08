@@ -8,7 +8,6 @@
 import UIKit
 
 protocol TodoListViewInput {
-    var output: TodoListViewOutput? { get set }
 }
 
 protocol TodoListViewOutput: AnyObject {

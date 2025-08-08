@@ -9,7 +9,6 @@ import Foundation
 import CoreData
 
 protocol TodoListInteractorInput {
-    var output: TodoListInteractorOutput? { get set }
     func loadTodos()
     func searchTodos(with query: String)
     func toggleTodoCompletion(id: Int)
