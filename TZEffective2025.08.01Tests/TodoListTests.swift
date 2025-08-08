@@ -279,7 +279,9 @@ final class TodoListInteractorTests: XCTestCase {
     
     func testSearchTodosWithQuery() {
         // Given
-        let expectation = XCTestExpectation(description: "Search todos")
+        let loadExpectation = XCTestExpectation(description: "Initial load completed")
+        let searchExpectation = XCTestExpectation(description: "Search completed")
+        
         let mockTodos = [
             TodoItemViewModel(id: 1, title: "Apple", describe: "Apple description", isCompleted: false, createdAt: Date(), userId: 1),
             TodoItemViewModel(id: 2, title: "Banana", describe: "Banana description", isCompleted: true, createdAt: Date(), userId: 1),
@@ -288,25 +290,35 @@ final class TodoListInteractorTests: XCTestCase {
         mockCoreDataService.mockTodos = mockTodos
         mockUserDefaultsService.isNotFirstLaunchResult = true
         
-        // Сначала загружаем todos
-        interactor.loadTodos()
+        // Сначала настраиваем замыкания для output
+        mockOutput.didLoadTodosCalled = { _ in
+            loadExpectation.fulfill()
+        }
         
         mockOutput.didUpdateTodosCalled = { todos in
             XCTAssertEqual(todos.count, 1)
             XCTAssertEqual(todos[0].title, "Apple")
-            expectation.fulfill()
+            searchExpectation.fulfill()
         }
         
-        // When
+        // When 1: Загружаем задачи
+        interactor.loadTodos()
+        
+        // Then 1: Ждем завершения загрузки
+        wait(for: [loadExpectation], timeout: 1.0)
+        
+        // When 2: Теперь, когда задачи загружены: выполняем поиск
         interactor.searchTodos(with: "Apple")
         
-        // Then
-        wait(for: [expectation], timeout: 5.0)
+        // Then 2: ждем завершения поиска
+        wait(for: [searchExpectation], timeout: 1.0)
     }
     
     func testSearchTodosWithEmptyQuery() {
         // Given
-        let expectation = XCTestExpectation(description: "Search todos with empty query")
+        let loadExpectation = XCTestExpectation(description: "Initial load for empty query test completed")
+        let searchExpectation = XCTestExpectation(description: "Search with empty query completed")
+        
         let mockTodos = [
             TodoItemViewModel(id: 1, title: "Test 1", describe: "Desc 1", isCompleted: false, createdAt: Date(), userId: 1),
             TodoItemViewModel(id: 2, title: "Test 2", describe: "Desc 2", isCompleted: true, createdAt: Date(), userId: 1)
@@ -314,50 +326,68 @@ final class TodoListInteractorTests: XCTestCase {
         mockCoreDataService.mockTodos = mockTodos
         mockUserDefaultsService.isNotFirstLaunchResult = true
         
-        // Сначала загружаем todos
-        interactor.loadTodos()
+        mockOutput.didLoadTodosCalled = { _ in
+            loadExpectation.fulfill()
+        }
         
         mockOutput.didUpdateTodosCalled = { todos in
             XCTAssertEqual(todos.count, 2)
-            expectation.fulfill()
+            searchExpectation.fulfill()
         }
         
-        // When
+        // When 1: загружаем todos
+        interactor.loadTodos()
+        
+        //Then 1: Ждем завершения загрузки
+        wait(for: [loadExpectation], timeout: 1.0)
+        
+        // When 2: теперь, когда задачи загружены, выполняем поиск
         interactor.searchTodos(with: "")
         
-        // Then
-        wait(for: [expectation], timeout: 5.0)
+        // Then2: ждем завершени поиска
+        wait(for: [searchExpectation], timeout: 1.0)
     }
     
     func testToggleTodoCompletion() {
         // Given
-        let expectation = XCTestExpectation(description: "Toggle todo completion")
+        let loadExpectation = XCTestExpectation(description: "Initial load for toggle test completed")
+        let toggleExpectation = XCTestExpectation(description: "Toggle todo completion completed")
+        
         let mockTodos = [
             TodoItemViewModel(id: 1, title: "Test 1", describe: "Desc 1", isCompleted: false, createdAt: Date(), userId: 1)
         ]
         mockCoreDataService.mockTodos = mockTodos
         mockUserDefaultsService.isNotFirstLaunchResult = true
         
-        // Сначала загружаем todos
-        interactor.loadTodos()
+        mockOutput.didLoadTodosCalled = { _ in
+            loadExpectation.fulfill()
+        }
         
         mockOutput.didUpdateTodosCalled = { todos in
             XCTAssertEqual(todos.count, 1)
             XCTAssertTrue(todos[0].isCompleted)
-            expectation.fulfill()
+            toggleExpectation.fulfill()
         }
         
-        // When
+        // When 1: загружаем todos
+        interactor.loadTodos()
+        
+        // Then 1: ждем завершения загрузки
+        wait(for: [loadExpectation], timeout: 1.0)
+        
+        // When 2: теперь, когда задачи загружены, переключаем статус
         interactor.toggleTodoCompletion(id: 1)
         
-        // Then
-        wait(for: [expectation], timeout: 5.0)
+        // Then 2: Ждем завершения переключения и проверяем результат
+        wait(for: [toggleExpectation], timeout: 1.0)
         XCTAssertTrue(mockCoreDataService.updateTodoCompletionCalled)
     }
     
     func testDeleteTodo() {
         // Given
-        let expectation = XCTestExpectation(description: "Delete todo")
+        let loadExpectation = XCTestExpectation(description: "Initial load for delete test completed")
+        let deleteExpectation = XCTestExpectation(description: "Delete todo completed")
+        
         let mockTodos = [
             TodoItemViewModel(id: 1, title: "Test 1", describe: "Desc 1", isCompleted: false, createdAt: Date(), userId: 1),
             TodoItemViewModel(id: 2, title: "Test 2", describe: "Desc 2", isCompleted: true, createdAt: Date(), userId: 1)
@@ -365,48 +395,64 @@ final class TodoListInteractorTests: XCTestCase {
         mockCoreDataService.mockTodos = mockTodos
         mockUserDefaultsService.isNotFirstLaunchResult = true
         
-        // Сначала загружаем todos
-        interactor.loadTodos()
+        mockOutput.didLoadTodosCalled = { _ in
+            loadExpectation.fulfill()
+        }
         
         mockOutput.didDeleteTodoCalled = { todos in
             XCTAssertEqual(todos.count, 1)
             XCTAssertEqual(todos[0].id, 2)
-            expectation.fulfill()
+            deleteExpectation.fulfill()
         }
         
-        // When
+        // When 1: загружаем задачи
+        interactor.loadTodos()
+        
+        // Then 1: ждем завершения загрузки
+        wait(for: [loadExpectation], timeout: 1.0)
+        
+        // When 2: теперь, когда задачи загружены, удаляем одну
         interactor.deleteTodo(1)
         
-        // Then
-        wait(for: [expectation], timeout: 5.0)
+        // Then 2: ждем завершения удаления и проверяем результат
+        wait(for: [deleteExpectation], timeout: 1.0)
         XCTAssertTrue(mockCoreDataService.deleteTodoCalled)
     }
     
     func testUpdateTodo() {
         // Given
-        let expectation = XCTestExpectation(description: "Update todo")
+        let loadExpectation = XCTestExpectation(description: "Initial load for delete test completed")
+        let updateExpectation = XCTestExpectation(description: "Update todo completed")
+        
         let mockTodos = [
             TodoItemViewModel(id: 1, title: "Old Title", describe: "Old Description", isCompleted: false, createdAt: Date(), userId: 1)
         ]
+        
         mockCoreDataService.mockTodos = mockTodos
         mockUserDefaultsService.isNotFirstLaunchResult = true
         
-        // Сначала загружаем todos
-        interactor.loadTodos()
+        mockOutput.didLoadTodosCalled = { _ in
+            loadExpectation.fulfill()
+        }
         
         mockOutput.didUpdateTodosCalled = { todos in
             XCTAssertEqual(todos.count, 1)
             XCTAssertEqual(todos[0].title, "New Title")
             XCTAssertEqual(todos[0].describe, "New Description")
-            expectation.fulfill()
+            updateExpectation.fulfill()
         }
         
-        // When
+        // When 1: Сначала загружаем todos
+        interactor.loadTodos()
+        
+        //Then 1: ждем завершения загрузки
+        wait(for: [loadExpectation], timeout: 5.0)
+        
+        // When 2: меняем название и описание
         interactor.updateTodo(id: 1, title: "New Title", description: "New Description")
         
-        // Then
-        wait(for: [expectation], timeout: 5.0)
-        XCTAssertTrue(mockCoreDataService.updateTodoCalled)
+        // Then 2: ждем завершения загрузки
+        wait(for: [updateExpectation], timeout: 5.0)
     }
 }
 
@@ -709,16 +755,43 @@ final class DetailTodoPresenterTests: XCTestCase {
     
     func testBackButtonTapped() {
         // Given
-        let mockDetailView = MockDetailTodoView()
-        mockDetailView.editedData = (title: "Test Title", description: "Test Description")
+        let title = "Test Title"
+        let description = "Test Description"
         
         // When
-        presenter.backButtonTapped()
+        presenter.backButtonTapped(title: title, description: description)
         
         // Then
-        XCTAssertTrue(mockInteractor.saveTodoCalled)
+        XCTAssertTrue(mockInteractor.saveTodoCalled, "Метод saveTodo должен был быть вызван, так как title не пустой.")
+        XCTAssertEqual(mockInteractor.saveTodoTitle, title)
+        XCTAssertEqual(mockInteractor.saveTodoDescription, description)
     }
     
+    func testBackButtonTappedWithEmptyTitleShouldShowError() {
+        // Given
+        let title = ""
+        let description = "Some description"
+        
+        // When
+        presenter.backButtonTapped(title: title, description: description)
+        
+        // Then
+        XCTAssertFalse(mockInteractor.saveTodoCalled, "Метод saveTodo не должен был быть вызван.")
+        XCTAssertTrue(mockView.showErrorCalled, "Метод showError должен был быть вызван.")
+    }
+
+    func testBackButtonTappedWithEmptyFieldsShouldClose() {
+        // Given
+        let title = ""
+        let description = ""
+        
+        // When
+        presenter.backButtonTapped(title: title, description: description)
+        
+        // Then
+        XCTAssertFalse(mockInteractor.saveTodoCalled, "Метод saveTodo не должен был быть вызван.")
+        XCTAssertTrue(mockView.closeViewCalled, "Метод closeView должен был быть вызван.")
+    }
     func testDidLoadTodo() {
         // Given
         let todo = TodoItemViewModel(id: 1, title: "Test Todo", describe: "Test Description", isCompleted: false, createdAt: Date(), userId: 1)

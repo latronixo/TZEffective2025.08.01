@@ -14,19 +14,11 @@
 			remoteGlobalIDString = CEFA4A5A2E3E181000FC15ED;
 			remoteInfo = TZEffective2025.08.01;
 		};
-		CEFA4A7F2E3E181200FC15ED /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CEFA4A532E3E181000FC15ED /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CEFA4A5A2E3E181000FC15ED;
-			remoteInfo = TZEffective2025.08.01;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		CEFA4A5B2E3E181000FC15ED /* TZEffective2025.08.01.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TZEffective2025.08.01.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEFA4A742E3E181200FC15ED /* TZEffective2025.08.01Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TZEffective2025.08.01Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CEFA4A7E2E3E181200FC15ED /* TZEffective2025.08.01UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TZEffective2025.08.01UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -70,13 +62,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CEFA4A7B2E3E181200FC15ED /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -94,7 +79,6 @@
 			children = (
 				CEFA4A5B2E3E181000FC15ED /* TZEffective2025.08.01.app */,
 				CEFA4A742E3E181200FC15ED /* TZEffective2025.08.01Tests.xctest */,
-				CEFA4A7E2E3E181200FC15ED /* TZEffective2025.08.01UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -147,26 +131,6 @@
 			productReference = CEFA4A742E3E181200FC15ED /* TZEffective2025.08.01Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		CEFA4A7D2E3E181200FC15ED /* TZEffective2025.08.01UITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CEFA4A8F2E3E181200FC15ED /* Build configuration list for PBXNativeTarget "TZEffective2025.08.01UITests" */;
-			buildPhases = (
-				CEFA4A7A2E3E181200FC15ED /* Sources */,
-				CEFA4A7B2E3E181200FC15ED /* Frameworks */,
-				CEFA4A7C2E3E181200FC15ED /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CEFA4A802E3E181200FC15ED /* PBXTargetDependency */,
-			);
-			name = TZEffective2025.08.01UITests;
-			packageProductDependencies = (
-			);
-			productName = TZEffective2025.08.01UITests;
-			productReference = CEFA4A7E2E3E181200FC15ED /* TZEffective2025.08.01UITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -181,10 +145,6 @@
 						CreatedOnToolsVersion = 16.4;
 					};
 					CEFA4A732E3E181200FC15ED = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = CEFA4A5A2E3E181000FC15ED;
-					};
-					CEFA4A7D2E3E181200FC15ED = {
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = CEFA4A5A2E3E181000FC15ED;
 					};
@@ -206,7 +166,6 @@
 			targets = (
 				CEFA4A5A2E3E181000FC15ED /* TZEffective2025.08.01 */,
 				CEFA4A732E3E181200FC15ED /* TZEffective2025.08.01Tests */,
-				CEFA4A7D2E3E181200FC15ED /* TZEffective2025.08.01UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -220,13 +179,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CEFA4A722E3E181200FC15ED /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CEFA4A7C2E3E181200FC15ED /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -250,13 +202,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CEFA4A7A2E3E181200FC15ED /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -264,11 +209,6 @@
 			isa = PBXTargetDependency;
 			target = CEFA4A5A2E3E181000FC15ED /* TZEffective2025.08.01 */;
 			targetProxy = CEFA4A752E3E181200FC15ED /* PBXContainerItemProxy */;
-		};
-		CEFA4A802E3E181200FC15ED /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CEFA4A5A2E3E181000FC15ED /* TZEffective2025.08.01 */;
-			targetProxy = CEFA4A7F2E3E181200FC15ED /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -486,40 +426,6 @@
 			};
 			name = Release;
 		};
-		CEFA4A902E3E181200FC15ED /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "potatoesTeam.TZEffective2025-08-01UITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = TZEffective2025.08.01;
-			};
-			name = Debug;
-		};
-		CEFA4A912E3E181200FC15ED /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z4PKJ57KTJ;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "potatoesTeam.TZEffective2025-08-01UITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = TZEffective2025.08.01;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -546,15 +452,6 @@
 			buildConfigurations = (
 				CEFA4A8D2E3E181200FC15ED /* Debug */,
 				CEFA4A8E2E3E181200FC15ED /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CEFA4A8F2E3E181200FC15ED /* Build configuration list for PBXNativeTarget "TZEffective2025.08.01UITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CEFA4A902E3E181200FC15ED /* Debug */,
-				CEFA4A912E3E181200FC15ED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
