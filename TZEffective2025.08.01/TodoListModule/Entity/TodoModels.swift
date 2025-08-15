@@ -9,14 +9,14 @@ import Foundation
 import CoreData
 
 // MARK: - API Models
-struct TodoResponse: Codable {
+struct TodoResponse {
     let todos: [TodoItemAPI]
     let total: Int
     let skip: Int
     let limit: Int
 }
 
-struct TodoItemAPI: Codable {
+struct TodoItemAPI {
     let id: Int
     let todo: String
     let completed: Bool
