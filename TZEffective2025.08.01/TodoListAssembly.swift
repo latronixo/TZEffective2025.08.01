@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TodoListAssembly {
+final class TodoListAssembly {
     static func assembleTodoListModule() -> UINavigationController {
         let view = TodoListView()
         let networkService = NetworkService()

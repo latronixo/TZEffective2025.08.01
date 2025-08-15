@@ -17,7 +17,7 @@ protocol CoreDataServiceProtocol {
     func createTodo(title: String, description: String, completion: @escaping(Int) -> Void)
 }
 
-class CoreDataService: CoreDataServiceProtocol {
+final class CoreDataService: CoreDataServiceProtocol {
     private let container: NSPersistentContainer
     private let backgroundQueue = DispatchQueue(label: "com.todo.coredata.queue", qos: .background)
         

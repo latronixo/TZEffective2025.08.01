@@ -12,7 +12,7 @@ protocol UserDefaultsServiceProtocol {
     func markAsNotFirstLaunch()
 }
 
-class UserDefaultsService: UserDefaultsServiceProtocol {
+final class UserDefaultsService: UserDefaultsServiceProtocol {
     private let userDefaults = UserDefaults.standard
     private let notFirstLaunchKey = "isNotFirstLaunch"
     

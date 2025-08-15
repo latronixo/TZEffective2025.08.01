@@ -13,7 +13,7 @@ protocol ContextMenuDelegate: AnyObject {
     func contextMenuDidSelectDelete()
 }
 
-class ContextMenu: UIViewController {
+final class ContextMenu: UIViewController {
     
     weak var delegate: ContextMenuDelegate?
     private var todo: TodoItemViewModel?

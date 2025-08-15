@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DetailTodoAssembly {
+final class DetailTodoAssembly {
     static func assembleDetailTodoModule(todo: TodoItemViewModel?, coreDataService: CoreDataServiceProtocol, todoListener: TodoUpdateListener?) -> UIViewController {
         let view = DetailTodoView()
         let interactor = DetailTodoInteractor(todo: todo, coreDataService: coreDataService)

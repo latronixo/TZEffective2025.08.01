@@ -10,7 +10,7 @@ import CoreData
 @testable import TZEffective2025_08_01
 
 // MARK: - Mock Classes
-class MockCoreDataService: CoreDataServiceProtocol {
+final class MockCoreDataService: CoreDataServiceProtocol {
     var mockTodos: [TodoItemViewModel] = []
     var createTodoCalled = false
     var updateTodoCalled = false
@@ -78,7 +78,7 @@ class MockCoreDataService: CoreDataServiceProtocol {
     }
 }
 
-class MockNetworkService: NetworkServiceProtocol {
+final class MockNetworkService: NetworkServiceProtocol {
     var fetchTodosCalled = false
     
     func fetchTodos(completion: @escaping (Result<TodoResponse, Error>) -> Void) {
@@ -95,7 +95,7 @@ class MockNetworkService: NetworkServiceProtocol {
     }
 }
 
-class MockUserDefaultsService: UserDefaultsServiceProtocol {
+final class MockUserDefaultsService: UserDefaultsServiceProtocol {
     var isNotFirstLaunchResult: Bool = false
     var isNotFirstLaunchCalled = false
     var markAsNotFirstLaunchCalled = false
@@ -110,7 +110,7 @@ class MockUserDefaultsService: UserDefaultsServiceProtocol {
     }
 }
 
-class MockTodoListInteractorOutput: TodoListInteractorOutput {
+final class MockTodoListInteractorOutput: TodoListInteractorOutput {
     var didLoadTodosCalled: (([TodoItemViewModel]) -> Void)?
     var didReceiveErrorCalled: ((String) -> Void)?
     var didUpdateTodosCalled: (([TodoItemViewModel]) -> Void)?
@@ -133,7 +133,7 @@ class MockTodoListInteractorOutput: TodoListInteractorOutput {
     }
 }
 
-class MockTodoListInteractor: TodoListInteractorInput {
+final class MockTodoListInteractor: TodoListInteractorInput {
     var output: TodoListInteractorOutput?
     
     var loadTodosCalled = false
@@ -175,7 +175,7 @@ class MockTodoListInteractor: TodoListInteractorInput {
     }
 }
 
-class MockTodoListRouter: TodoListRouterInput {
+final class MockTodoListRouter: TodoListRouterInput {
     var openDetailScreenCalled = false
     var openDetailScreenTodo: TodoItemViewModel?
     var openAddNewTodoScreenCalled = false
@@ -229,7 +229,7 @@ class MockTodoListView: TodoListViewInput {
     }
 }
 
-class MockDetailTodoInteractorOutput: DetailTodoInteractorOutput {
+final class MockDetailTodoInteractorOutput: DetailTodoInteractorOutput {
     var didLoadTodoCalled: ((TodoItemViewModel) -> Void)?
     var didSaveTodoCalled: ((Int, String, String, Bool) -> Void)?
     var didReceiveErrorCalled: ((String) -> Void)?
@@ -247,7 +247,7 @@ class MockDetailTodoInteractorOutput: DetailTodoInteractorOutput {
     }
 }
 
-class MockDetailTodoInteractor: DetailTodoInteractorInput {
+final class MockDetailTodoInteractor: DetailTodoInteractorInput {
     var output: DetailTodoInteractorOutput?
     
     var loadTodoCalled = false
@@ -266,7 +266,7 @@ class MockDetailTodoInteractor: DetailTodoInteractorInput {
     }
 }
 
-class MockDetailTodoRouter: DetailTodoRouterInput {
+final class MockDetailTodoRouter: DetailTodoRouterInput {
     var closeViewCalled = false
     
     func closeView() {
@@ -274,7 +274,7 @@ class MockDetailTodoRouter: DetailTodoRouterInput {
     }
 }
 
-class MockTodoUpdateListener: TodoUpdateListener {
+final class MockTodoUpdateListener: TodoUpdateListener {
     var updateCalled = false
     var updateModel: TodoUpdateModel?
     
@@ -284,7 +284,7 @@ class MockTodoUpdateListener: TodoUpdateListener {
     }
 }
 
-class MockDetailTodoView: DetailTodoViewInput {
+final class MockDetailTodoView: DetailTodoViewInput {
     var displayTodoCalled = false
     var showErrorCalled = false
     var closeViewCalled = false

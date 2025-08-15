@@ -12,7 +12,7 @@ protocol TodoTableViewCellDelegate: AnyObject {
     func todoCellDidTap(_ cell: TodoTableViewCell)
 }
 
-class TodoTableViewCell: UITableViewCell {
+final class TodoTableViewCell: UITableViewCell {
     weak var delegate: TodoTableViewCellDelegate?
     private lazy var containerView: UIView = {
         let element = UIView()

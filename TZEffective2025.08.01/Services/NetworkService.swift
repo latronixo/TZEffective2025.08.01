@@ -11,7 +11,7 @@ protocol NetworkServiceProtocol {
     func fetchTodos(completion: @escaping (Result<TodoResponse, Error>) -> Void)
 }
 
-class NetworkService: NetworkServiceProtocol {
+final class NetworkService: NetworkServiceProtocol {
     private let baseURL = "https://dummyjson.com/todos"
     
     func fetchTodos(completion: @escaping (Result<TodoResponse, any Error>) -> Void) {
