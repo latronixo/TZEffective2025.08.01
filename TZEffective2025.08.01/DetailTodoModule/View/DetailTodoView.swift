@@ -11,13 +11,6 @@ protocol TodoUpdateListener: AnyObject {
     func update(model: TodoUpdateModel)
 }
 
-struct TodoUpdateModel {
-    let id: Int
-    let title: String
-    let description: String
-    let isNew: Bool
-}
-
 protocol DetailTodoViewInput {
     func displayTodo(_ todo: TodoItemViewModel)
     func showError(_ message: String)
